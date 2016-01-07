@@ -1,6 +1,7 @@
 <?php namespace Kahire\tests\Kahire\Serializers\Fields;
 
 use Kahire\Serializers\Fields\Exceptions\ValidationError;
+use Kahire\Serializers\Fields\Exceptions\ValueError;
 use Kahire\Serializers\Fields\Field;
 
 class FieldTestCase extends \TestCase {
@@ -49,7 +50,7 @@ class FieldTestCase extends \TestCase {
                 continue;
             }
 
-            $this->fail("Validation exception not thrown");
+            $this->fail("Validation exception is not thrown");
         }
     }
 
