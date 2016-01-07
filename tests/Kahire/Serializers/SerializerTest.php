@@ -33,7 +33,7 @@ class SerializerTest extends \TestCase {
             }
 
 
-            public function getFields(): array
+            public function getFields()
             {
                 return [
                     "big_number"    => IntegerField::create()->readOnly(true),

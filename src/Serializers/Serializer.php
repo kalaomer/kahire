@@ -12,7 +12,10 @@ use Kahire\Serializers\Fields\Field;
  */
 abstract class Serializer extends Field {
 
-    abstract public function getFields(): array;
+    /**
+     * @return array
+     */
+    abstract public function getFields();
 
 
     protected $partial = false;
@@ -38,23 +41,31 @@ abstract class Serializer extends Field {
 
         $this->addAttributes("partial", "instance", "initialData");
         $this->fields = $this->getFields();
-        $this->setReadableAndWritableFields();
+        $this->writableFields = iterator_to_array($this->getWritableFields());
+        $this->readableFields = iterator_to_array($this->getReadableFields());
     }
 
 
-    protected function setReadableAndWritableFields()
+    protected function getWritableFields()
     {
         /* @var $field Field */
         foreach ($this->fields as $field)
         {
             if ( ! $field->readOnly or $field->default != null )
             {
-                $this->writableFields[] = $field;
+                yield $field;
             }
+        }
+    }
 
+    protected function getReadableFields()
+    {
+        /* @var $field Field */
+        foreach ($this->fields as $field)
+        {
             if ( $field->writeOnly == false )
             {
-                $this->readableFields[] = $field;
+                yield $field;
             }
         }
     }
