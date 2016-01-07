@@ -1,6 +1,6 @@
 <?php namespace Kahire\Serializers\Fields;
 
-use Kahire\src\Serializers\Fields\Exceptions\ValueError;
+use Kahire\Serializers\Fields\Exceptions\ValueError;
 
 class BooleanField extends Field {
 
@@ -10,13 +10,18 @@ class BooleanField extends Field {
 
     public function toRepresentation($value)
     {
-        if ( in_array($value, BooleanField::TRUE_VALUES) )
+        foreach (self::TRUE_VALUES as $trueValue)
         {
-            return true;
+            if ($trueValue === $value) {
+                return true;
+            }
         }
-        elseif ( in_array($value, BooleanField::FALSE_VALUES) )
+
+        foreach (self::FALSE_VALUES as $falseValue)
         {
-            return false;
+            if ($falseValue === $value) {
+                return false;
+            }
         }
 
         return (bool) $value;
@@ -25,16 +30,21 @@ class BooleanField extends Field {
 
     public function toInternalValue($value)
     {
-        if ( in_array($value, BooleanField::TRUE_VALUES) )
+        foreach (self::TRUE_VALUES as $trueValue)
         {
-            return true;
-        }
-        elseif ( in_array($value, BooleanField::FALSE_VALUES) )
-        {
-            return false;
+            if ($trueValue === $value) {
+                return true;
+            }
         }
 
-        throw new ValueError($value);
+        foreach (self::FALSE_VALUES as $falseValue)
+        {
+            if ($falseValue === $value) {
+                return false;
+            }
+        }
+
+        $this->fail("invalid");
     }
 
 }

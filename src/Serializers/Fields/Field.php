@@ -179,7 +179,7 @@ abstract class Field {
             return [ false, $data ];
         }
 
-        if ( is_null($data) or $data == "" )
+        if ( is_null($data) or $data === "" )
         {
             if ( isset( $this->root->partial ) and $this->root->partial )
             {
