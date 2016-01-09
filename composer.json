@@ -21,7 +21,8 @@
     "autoload-dev": {
         "classmap": [
             "tests/TestCase.php",
-            "tests/Kahire/Serializers/Fields/FieldTestCase.php"
+            "tests/Kahire/Serializers/Fields/FieldTestCase.php",
+            "tests/db/models/FooModel.php"
         ]
     }
 }

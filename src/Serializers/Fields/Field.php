@@ -1,6 +1,7 @@
 <?php namespace Kahire\Serializers\Fields;
 
 use Illuminate\Support\Facades\Validator;
+use Kahire\Serializers\Fields\DataTypes\EmptyType;
 use Kahire\Serializers\Fields\Exceptions\AttributeError;
 use Kahire\Serializers\Fields\Exceptions\SkipField;
 use Kahire\Serializers\Fields\Exceptions\ValidationError;
@@ -10,10 +11,12 @@ use Kahire\Serializers\Serializer;
  * Class Field
  * @package Kahire\Serializers\Fields
  * @method $this allowNull()
+ * @method $this allowBlank()
  * @method $this required()
  * @method $this readOnly()
  * @method $this writeOnly()
  * @method $this source()
+ * @method $this sourceAttr()
  * @method $this default()
  * @method $this validators()
  */
@@ -27,6 +30,8 @@ abstract class Field {
 
     protected $allowNull = false;
 
+    protected $allowBlank = false;
+
     protected $required = true;
 
     protected $readOnly = false;
@@ -35,7 +40,9 @@ abstract class Field {
 
     protected $source = null;
 
-    protected $default = null;
+    protected $sourceAttr = [ ];
+
+    protected $default;
 
     protected $validators = [ ];
 
@@ -43,10 +50,12 @@ abstract class Field {
 
     protected $baseAttributes = [
         "allowNull",
+        "allowBlank",
         "required",
         "readOnly",
         "writeOnly",
         "source",
+        "sourceAttr",
         "default",
         "validators"
     ];
@@ -74,7 +83,7 @@ abstract class Field {
     protected $root;
 
 
-    public static function create()
+    public static function generate()
     {
         return new static;
     }
@@ -83,6 +92,7 @@ abstract class Field {
     public function __construct()
     {
         array_push($this->attributes, ...$this->baseAttributes);
+        $this->default = EmptyType::get();
     }
 
 
@@ -112,7 +122,7 @@ abstract class Field {
     }
 
 
-    public function bind(string $fieldName, Field $parent)
+    public function bind(string $fieldName, $parent)
     {
         $this->fieldName = $fieldName;
         $this->parent    = $parent;
@@ -129,31 +139,82 @@ abstract class Field {
         }
 
         $this->root = $root;
+
+        if ( $this->source !== "*" )
+        {
+            $this->sourceAttr = explode(".", $this->source);
+        }
     }
 
 
+    /**
+     * $instance should be an array or object which is implements ArrayAccess interface.
+     *
+     * @param $instance array|ArrayAccess
+     *
+     * @return mixed
+     * @throws AttributeError
+     * @throws SkipField
+     */
     public function getAttribute($instance)
     {
         try
         {
-            return $instance->{$this->source};
+            foreach ($this->sourceAttr as $attr)
+            {
+                $instance = $instance[$attr];
+            }
+
+            return $instance;
         }
         catch (\Exception $e)
         {
             // If there is not attribute and not required then throw SkipField
-            if ( $this->required == false )
+            if ( $this->required == false and EmptyType::isEmpty($this->default) )
             {
                 throw new SkipField();
             }
 
-            throw new AttributeError();
+            throw new AttributeError("{$this->fieldName} is not match in {$this->parent->getFieldName()}");
         }
+    }
+
+
+    public function getValue($values)
+    {
+        if ( ! array_key_exists($this->fieldName, $values) )
+        {
+            return EmptyType::get();
+        }
+
+        $value = $values[$this->fieldName];
+
+        if ( $value === "" and $this->allowNull )
+        {
+            if ( $this->allowBlank )
+            {
+                return "";
+            }
+
+            return null;
+        }
+        elseif ( $value === "" and ! $this->required )
+        {
+            if ( $this->allowBlank )
+            {
+                return "";
+            }
+
+            return EmptyType::get();
+        }
+
+        return $value;
     }
 
 
     public function getDefault()
     {
-        if ( is_null($this->default) or $this->default == "" )
+        if ( EmptyType::isEmpty($this->default) )
         {
             throw new SkipField();
         }
@@ -172,16 +233,25 @@ abstract class Field {
     }
 
 
+    /**
+     * @param $data
+     *
+     * Return [isEmpty, data]
+     *
+     * @return array
+     * @throws SkipField
+     * @throws ValidationError
+     */
     public function validateEmptyValues($data)
     {
         if ( $this->readOnly )
         {
-            return [ false, $data ];
+            return [ true, $this->getDefault() ];
         }
 
-        if ( is_null($data) or $data === "" )
+        if ( EmptyType::isEmpty($data) )
         {
-            if ( isset( $this->root->partial ) and $this->root->partial )
+            if ( $this->root instanceof Serializer and $this->root->partial() )
             {
                 throw new SkipField();
             }
@@ -192,6 +262,16 @@ abstract class Field {
             }
 
             return [ true, $this->getDefault() ];
+        }
+
+        if ( $data === null )
+        {
+            if ( ! $this->allowNull )
+            {
+                $this->fail("invalid");
+            }
+
+            return [ true, null ];
         }
 
         return [ false, $data ];

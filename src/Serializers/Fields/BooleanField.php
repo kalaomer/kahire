@@ -10,16 +10,20 @@ class BooleanField extends Field {
 
     public function toRepresentation($value)
     {
+        // Can not use is_array or array_search
+        // Because they always return TRUE because of `true` value which is in TRUE_VALUES.
         foreach (self::TRUE_VALUES as $trueValue)
         {
-            if ($trueValue === $value) {
+            if ( $trueValue === $value )
+            {
                 return true;
             }
         }
 
         foreach (self::FALSE_VALUES as $falseValue)
         {
-            if ($falseValue === $value) {
+            if ( $falseValue === $value )
+            {
                 return false;
             }
         }
@@ -32,14 +36,16 @@ class BooleanField extends Field {
     {
         foreach (self::TRUE_VALUES as $trueValue)
         {
-            if ($trueValue === $value) {
+            if ( $trueValue === $value )
+            {
                 return true;
             }
         }
 
         foreach (self::FALSE_VALUES as $falseValue)
         {
-            if ($falseValue === $value) {
+            if ( $falseValue === $value )
+            {
                 return false;
             }
         }
