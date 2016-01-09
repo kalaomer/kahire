@@ -1,7 +1,5 @@
 <?php namespace Kahire\Serializers\Fields;
 
-use Kahire\Serializers\Fields\Exceptions\ValueError;
-
 class BooleanField extends Field {
 
     CONST TRUE_VALUES = [ "t", "T", "true", "True", "TRUE", "1", 1, true ];
