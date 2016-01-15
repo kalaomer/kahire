@@ -1,14 +1,13 @@
-<?php
-
-namespace Kahire\tests\Kahire\Serializers;
+<?php namespace Kahire\Tests\Serializers;
 
 use Kahire\Serializers\Fields\BooleanField;
 use Kahire\Serializers\Fields\EmailField;
 use Kahire\Serializers\Fields\IntegerField;
 use Kahire\Serializers\Fields\StringField;
 use Kahire\Serializers\Serializer;
+use Kahire\Tests\TestCase;
 
-class SerializerTest extends \TestCase {
+class SerializerTest extends TestCase {
 
     /**
      * @var Serializer
@@ -37,11 +36,11 @@ class SerializerTest extends \TestCase {
             public function getFields()
             {
                 return [
-                    "big_number"    => IntegerField::generate()->readOnly(true)->default(100),
-                    "status"        => BooleanField::generate()->writeOnly(true),
-                    "small_number"  => IntegerField::generate()->max(10),
-                    "name"          => StringField::generate(),
-                    "email"         => EmailField::generate()
+                    "big_number"   => IntegerField::generate()->readOnly(true)->default(100),
+                    "status"       => BooleanField::generate()->writeOnly(true),
+                    "small_number" => IntegerField::generate()->max(10),
+                    "name"         => StringField::generate(),
+                    "email"        => EmailField::generate()
                 ];
             }
         };
@@ -70,10 +69,10 @@ class SerializerTest extends \TestCase {
     public function testIsValid()
     {
         $validData = [
-            "status" => false,
+            "status"       => false,
             "small_number" => 10,
-            "name" => "foo",
-            "email" => "foo@bar.com"
+            "name"         => "foo",
+            "email"        => "foo@bar.com"
         ];
 
         $this->serializer->data($validData);
@@ -81,29 +80,26 @@ class SerializerTest extends \TestCase {
         $this->assertEquals(true, $this->serializer->isValid());
         $this->assertEquals(false, $this->serializer->hasError());
 
-        $this->serializer->data([]);
+        $this->serializer->data([ ]);
         $this->assertEquals(false, $this->serializer->isValid());
         $this->assertEquals(true, $this->serializer->hasError());
     }
 
 
-    /**
-     * @group develop
-     */
     public function testData()
     {
         $validData = [
-            "status" => "1",
+            "status"       => "1",
             "small_number" => 10,
-            "name" => "foo",
-            "email" => "foo@bar.com"
+            "name"         => "foo",
+            "email"        => "foo@bar.com"
         ];
 
         $output = [
             "small_number" => 10,
-            "name" => "foo",
-            "email" => "foo@bar.com",
-            "big_number" => 100
+            "name"         => "foo",
+            "email"        => "foo@bar.com",
+            "big_number"   => 100
         ];
 
         $this->serializer->data($validData);

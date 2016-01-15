@@ -10,6 +10,7 @@ use Kahire\Serializers\Fields\Field;
  * @package Kahire\Serializers
  * @method $this partial()
  * @method $this instance()
+ * @method $this context()
  */
 abstract class Serializer extends Field {
 
@@ -31,6 +32,8 @@ abstract class Serializer extends Field {
 
     protected $initialData = null;
 
+    protected $context = [ ];
+
     protected $fields = [ ];
 
     public $errors = [ ];
@@ -44,9 +47,18 @@ abstract class Serializer extends Field {
     {
         parent::__construct();
 
-        $this->addAttributes("partial", "instance");
+        $this->addAttributes("partial", "instance", "context");
         $this->fields = $this->getFields();
         $this->setFields();
+    }
+
+
+    /**
+     * @return ListSerializer
+     */
+    public function many()
+    {
+        return ListSerializer::generate()->child($this);
     }
 
 
@@ -247,6 +259,12 @@ abstract class Serializer extends Field {
     }
 
 
+    /**
+     * @param array|null $initialData
+     *
+     * @return $this|array|null
+     * @throws \AssertionError
+     */
     public function data(array $initialData = null)
     {
         if ( $initialData !== null )

@@ -5,8 +5,9 @@ use Kahire\Serializers\Fields\Exceptions\AttributeError;
 use Kahire\Serializers\Fields\Exceptions\SkipField;
 use Kahire\Serializers\Fields\Exceptions\ValidationError;
 use Kahire\Serializers\Fields\Field;
+use Kahire\Tests\TestCase;
 
-class FieldTest extends \TestCase {
+class FieldTest extends TestCase {
 
     /**
      * @var Field
@@ -143,20 +144,22 @@ class FieldTest extends \TestCase {
         $this->field->runValidation(300);
     }
 
+
     public function testBind()
     {
         $parent = clone $this->field;
         $this->field->bind("foo", $parent);
 
         $parentAttribute = \PHPUnit_Framework_Assert::readAttribute($this->field, "parent");
-        $rootAttribute = \PHPUnit_Framework_Assert::readAttribute($this->field, "root");
+        $rootAttribute   = \PHPUnit_Framework_Assert::readAttribute($this->field, "root");
 
         $this->assertEquals("foo", $this->field->getFieldName());
         $this->assertEquals("foo", $this->field->source());
-        $this->assertEquals(["foo"], $this->field->sourceAttr());
+        $this->assertEquals([ "foo" ], $this->field->sourceAttr());
         $this->assertEquals($parent, $parentAttribute);
         $this->assertEquals($parent, $rootAttribute);
     }
+
 
     public function testGetValue()
     {
@@ -166,14 +169,11 @@ class FieldTest extends \TestCase {
         ];
 
         $this->assertEquals($values["foo"], $this->field->getValue($values));
-        $this->assertEquals(EmptyType::get(), $this->field->getValue([]));
-        $this->assertEquals(null, $this->field->getValue(["foo" => null]));
+        $this->assertEquals(EmptyType::get(), $this->field->getValue([ ]));
+        $this->assertEquals(null, $this->field->getValue([ "foo" => null ]));
     }
 
 
-    /**
-     * @group develop
-     */
     public function testGetAttribute()
     {
         $instance = [
@@ -190,13 +190,15 @@ class FieldTest extends \TestCase {
         $this->assertEquals($instance["bar"]["key"], $this->field->getAttribute($instance));
     }
 
+
     public function testGetAttributeSkipField()
     {
         $this->setExpectedException(SkipField::class);
         $this->field->required(false);
 
-        $this->field->getAttribute([]);
+        $this->field->getAttribute([ ]);
     }
+
 
     public function testGetAttributeAttributeError()
     {
@@ -205,6 +207,6 @@ class FieldTest extends \TestCase {
 
         $this->setExpectedException(AttributeError::class);
 
-        $this->field->getAttribute([]);
+        $this->field->getAttribute([ ]);
     }
 }

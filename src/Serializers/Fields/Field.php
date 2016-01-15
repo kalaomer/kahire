@@ -1,6 +1,8 @@
 <?php namespace Kahire\Serializers\Fields;
 
 use Illuminate\Support\Facades\Validator;
+use Kahire\Serializers\Fields\Attributes\ReadWriteOnlyAttribute;
+use Kahire\Serializers\Fields\Attributes\RequiredAttribute;
 use Kahire\Serializers\Fields\DataTypes\EmptyType;
 use Kahire\Serializers\Fields\Exceptions\AttributeError;
 use Kahire\Serializers\Fields\Exceptions\SkipField;
@@ -12,15 +14,15 @@ use Kahire\Serializers\Serializer;
  * @package Kahire\Serializers\Fields
  * @method $this allowNull()
  * @method $this allowBlank()
- * @method $this required()
- * @method $this readOnly()
- * @method $this writeOnly()
  * @method $this source()
  * @method $this sourceAttr()
  * @method $this default()
  * @method $this validators()
  */
 abstract class Field {
+
+    use RequiredAttribute, ReadWriteOnlyAttribute;
+
 
     abstract public function toRepresentation($value);
 
@@ -31,12 +33,6 @@ abstract class Field {
     protected $allowNull = false;
 
     protected $allowBlank = false;
-
-    protected $required = true;
-
-    protected $readOnly = false;
-
-    protected $writeOnly = false;
 
     protected $source = null;
 
@@ -51,9 +47,6 @@ abstract class Field {
     protected $baseAttributes = [
         "allowNull",
         "allowBlank",
-        "required",
-        "readOnly",
-        "writeOnly",
         "source",
         "sourceAttr",
         "default",
@@ -83,9 +76,14 @@ abstract class Field {
     protected $root;
 
 
+    /**
+     * @return static
+     */
     public static function generate()
     {
-        return new static;
+        $reflection = new \ReflectionClass(static::class);
+
+        return $reflection->newInstanceArgs(func_get_args());
     }
 
 
@@ -187,28 +185,7 @@ abstract class Field {
             return EmptyType::get();
         }
 
-        $value = $values[$this->fieldName];
-
-        if ( $value === "" and $this->allowNull )
-        {
-            if ( $this->allowBlank )
-            {
-                return "";
-            }
-
-            return null;
-        }
-        elseif ( $value === "" and ! $this->required )
-        {
-            if ( $this->allowBlank )
-            {
-                return "";
-            }
-
-            return EmptyType::get();
-        }
-
-        return $value;
+        return $values[$this->fieldName];
     }
 
 
@@ -278,7 +255,7 @@ abstract class Field {
     }
 
 
-    public function runValidatorClause($data)
+    public function runValidationClause($data)
     {
         $validationClause = $this->getValidationClause();
 
@@ -306,7 +283,7 @@ abstract class Field {
 
         $value = $this->toInternalValue($data);
         $this->runValidators($value);
-        $this->runValidatorClause($value);
+        $this->runValidationClause($value);
 
         return $value;
     }
@@ -362,18 +339,23 @@ abstract class Field {
      */
     public function getValidationRules()
     {
-        return [ ];
+        $rules = [ ];
+
+        foreach (get_class_methods(get_called_class()) as $method)
+        {
+            if ( preg_match("/^get[A-Za-z]+ValidationRule$/", $method) )
+            {
+                $rules = array_merge($rules, call_user_func([ $this, $method ]));
+            }
+        }
+
+        return $rules;
     }
 
 
     public function getValidationClause()
     {
         $validationRules = array_merge($this->validationRules, $this->getValidationRules());
-
-        if ( $this->required )
-        {
-            array_unshift($validationRules, "required");
-        }
 
         $ruleClauses = [ ];
 

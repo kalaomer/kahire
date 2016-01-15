@@ -1,4 +1,4 @@
-<?php namespace Kahire\tests\Kahire\Serializers\Fields;
+<?php namespace Kahire\Tests\Serializers\Fields;
 
 use Kahire\Serializers\Fields\Exceptions\ValidationError;
 use Kahire\Serializers\Fields\IntegerField;

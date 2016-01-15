@@ -1,8 +1,8 @@
-<?php namespace tests\db\models;
+<?php namespace TestSubject;
 
 use Illuminate\Database\Eloquent\Model;
 
-class FooModel extends Model {
+class Foo extends Model {
 
     protected $table = "foo";
 }

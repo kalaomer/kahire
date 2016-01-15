@@ -1,10 +1,10 @@
-<?php namespace Kahire\tests\Kahire\Serializers\Fields;
+<?php namespace Kahire\Tests\Serializers\Fields;
 
 use Kahire\Serializers\Fields\Exceptions\ValidationError;
-use Kahire\Serializers\Fields\Exceptions\ValueError;
 use Kahire\Serializers\Fields\Field;
+use Kahire\Tests\TestCase;
 
-class FieldTestCase extends \TestCase {
+class FieldTestCase extends TestCase {
 
     public $validInputs = [ ];
 

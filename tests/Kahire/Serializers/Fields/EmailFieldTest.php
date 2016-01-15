@@ -1,33 +1,26 @@
-<?php namespace Kahire\tests\Kahire\Serializers\Fields;
+<?php namespace Kahire\Tests\Serializers\Fields;
 
 use Kahire\Serializers\Fields\EmailField;
-use Kahire\Serializers\Fields\Exceptions\ValidationError;
 
-class EmailFieldTest extends \TestCase {
+class EmailFieldTest extends FieldTestCase {
+
+    public $fieldClass = EmailField::class;
 
     /**
      * @var EmailField
      */
     public $field;
 
+    public $validInputs = [
+        "foo@bar.com" => "foo@bar.com"
+    ];
 
-    public function setUp()
-    {
-        parent::setUp();
+    public $invalidInputs = [
+        "foo",
+        "hey!"
+    ];
 
-        $this->field = new EmailField();
-    }
-
-
-    public function testRunValidation()
-    {
-        $this->assertEquals("foo@bar.com", $this->field->runValidation("foo@bar.com"));
-    }
-
-
-    public function testRunValidationException()
-    {
-        $this->setExpectedException(ValidationError::class);
-        $this->field->runValidation("not an email");
-    }
+    public $outputs = [
+        "foo@bar.com" => "foo@bar.com"
+    ];
 }

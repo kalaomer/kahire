@@ -1,20 +1,17 @@
 <?php namespace Kahire\Serializers\Fields;
 
-use Kahire\Serializers\Fields\ValidationRules\MinMaxTrait;
+use Kahire\Serializers\Fields\Attributes\MaximumAttribute;
+use Kahire\Serializers\Fields\Attributes\MinimumAttribute;
 
 /**
  * Class IntegerField
  * @package Kahire\Serializers\Fields
- * @method $this min()
- * @method $this max()
  */
 class IntegerField extends Field {
 
-    use MinMaxTrait;
+    use MinimumAttribute, MaximumAttribute;
 
     protected $validationRules = [ "integer" ];
-
-    protected $attributes = [ "min", "max" ];
 
 
     public function toInternalValue($value)
@@ -33,10 +30,5 @@ class IntegerField extends Field {
         return (int) $value;
     }
 
-
-    public function getValidationRules()
-    {
-        return $this->getMinMaxValidationRules();
-    }
 }
 
