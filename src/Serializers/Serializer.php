@@ -143,7 +143,7 @@ abstract class Serializer extends Field {
             }
             catch (ValidationError $e)
             {
-                $errors[$field->getFieldName()] = $e->getMessage();
+                $errors[$field->getFieldName()] = $e->getErrors();
             }
             catch (SkipField $e)
             {
@@ -241,7 +241,7 @@ abstract class Serializer extends Field {
         catch (ValidationError $e)
         {
             $this->validatedData = [ ];
-            $this->errors[]      = $e->getMessage();
+            $this->errors[]      = $e->getErrors();
         }
 
         if ( $this->errors and $raiseException )

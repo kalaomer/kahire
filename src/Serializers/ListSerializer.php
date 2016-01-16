@@ -102,7 +102,7 @@ class ListSerializer extends Serializer {
             }
             catch (ValidationError $e)
             {
-                $errors[] = $e;
+                $errors[] = $e->getErrors();
                 continue;
             }
 
