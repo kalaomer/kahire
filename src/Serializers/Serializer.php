@@ -241,10 +241,10 @@ abstract class Serializer extends Field {
         catch (ValidationError $e)
         {
             $this->validatedData = [ ];
-            $this->errors[]      = $e->getErrors();
+            $this->errors        = $e->getErrors();
         }
 
-        if ( $this->errors and $raiseException )
+        if ( $this->errors !== [] and $raiseException )
         {
             throw new ValidationError($this->errors);
         }
@@ -255,7 +255,7 @@ abstract class Serializer extends Field {
 
     public function hasError()
     {
-        return isset( $this->errors[0] );
+        return $this->errors !== [];
     }
 
 
