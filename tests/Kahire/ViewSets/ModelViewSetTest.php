@@ -42,6 +42,7 @@ class ModelViewSetTest extends TestCase {
 
         $this->assertResponseOk();
         $this->seeJsonEquals($this->validData);
+        $this->seeJson();
     }
 
 
@@ -52,6 +53,7 @@ class ModelViewSetTest extends TestCase {
         $this->get("foo/1");
         $this->assertResponseOk();
         $this->seeJsonEquals($this->validData);
+        $this->seeJson();
     }
 
 
@@ -62,6 +64,7 @@ class ModelViewSetTest extends TestCase {
         $this->get("foo/");
         $this->assertResponseOk();
         $this->seeJsonEquals([ $this->validData ]);
+        $this->seeJson();
     }
 
 
