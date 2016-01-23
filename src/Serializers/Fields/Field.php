@@ -120,7 +120,7 @@ abstract class Field {
     }
 
 
-    public function bind(string $fieldName, $parent)
+    public function bind($fieldName, $parent)
     {
         $this->fieldName = $fieldName;
         $this->parent    = $parent;

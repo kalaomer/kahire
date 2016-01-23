@@ -19,19 +19,7 @@ class FieldTest extends TestCase {
     {
         parent::setUp();
 
-        $this->field = new class extends Field {
-
-            public function toInternalValue($value)
-            {
-                return $value;
-            }
-
-
-            public function toRepresentation($value)
-            {
-                return $value;
-            }
-        };
+        $this->field = new FooField();
 
         $this->field->bind("foo", null);
     }
@@ -55,25 +43,7 @@ class FieldTest extends TestCase {
         $this->assertEquals(null, $this->field->runValidation(null));
         $this->assertEquals("foo", $this->field->runValidation(EmptyType::get()));
 
-        $this->field->default(new class {
-
-            /**
-             * @var Field
-             */
-            public $field;
-
-
-            public function setContext(Field $field)
-            {
-                $this->field = $field;
-            }
-
-
-            public function __invoke()
-            {
-                return $this->field->getFieldName();
-            }
-        });
+        $this->field->default(new DefaultValue());
 
         $this->assertEquals($this->field->getFieldName(), $this->field->runValidation(EmptyType::get()));
     }
@@ -96,30 +66,7 @@ class FieldTest extends TestCase {
     public function testValidators()
     {
         $this->field->validators([
-            new class {
-
-                /**
-                 * @var Field
-                 */
-                public $field;
-
-
-                public function setContext(Field $field)
-                {
-                    $this->field = $field;
-                }
-
-
-                public function __invoke($value)
-                {
-                    if ( $value > 10 )
-                    {
-                        throw new ValidationError("number is too high");
-                    }
-
-                    return $value;
-                }
-            }
+            new Validator()
         ]);
 
         $this->setExpectedException(ValidationError::class);
@@ -208,5 +155,64 @@ class FieldTest extends TestCase {
         $this->setExpectedException(AttributeError::class);
 
         $this->field->getAttribute([ ]);
+    }
+}
+
+class FooField extends Field {
+
+    public function toInternalValue($value)
+    {
+        return $value;
+    }
+
+
+    public function toRepresentation($value)
+    {
+        return $value;
+    }
+}
+
+class DefaultValue {
+
+    /**
+     * @var Field
+     */
+    public $field;
+
+
+    public function setContext(Field $field)
+    {
+        $this->field = $field;
+    }
+
+
+    public function __invoke()
+    {
+        return $this->field->getFieldName();
+    }
+}
+
+class Validator {
+
+    /**
+     * @var Field
+     */
+    public $field;
+
+
+    public function setContext(Field $field)
+    {
+        $this->field = $field;
+    }
+
+
+    public function __invoke($value)
+    {
+        if ( $value > 10 )
+        {
+            throw new ValidationError("number is too high");
+        }
+
+        return $value;
     }
 }

@@ -21,19 +21,7 @@ class ModelSerializerTest extends TestCase {
     {
         parent::setUp();
 
-        $this->serializer = new class extends ModelSerializer {
-
-            public $model = Foo::class;
-
-
-            public function getFields()
-            {
-                return [
-                    "string"  => StringField::generate(),
-                    "integer" => IntegerField::generate()
-                ];
-            }
-        };
+        $this->serializer = new FooModelSerializer();
     }
 
 
@@ -76,5 +64,19 @@ class ModelSerializerTest extends TestCase {
 
         $this->assertEquals($validData,
             Foo::select("string", "integer")->where("id", $instance->id)->first()->toArray());
+    }
+}
+
+class FooModelSerializer extends ModelSerializer {
+
+    public $model = Foo::class;
+
+
+    public function getFields()
+    {
+        return [
+            "string"  => StringField::generate(),
+            "integer" => IntegerField::generate()
+        ];
     }
 }

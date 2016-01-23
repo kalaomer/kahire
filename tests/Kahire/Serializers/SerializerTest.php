@@ -19,32 +19,7 @@ class SerializerTest extends TestCase {
     {
         parent::setUp();
 
-        $this->serializer = new class extends Serializer {
-
-            public function create($validatedData)
-            {
-                // TODO: Implement create() method.
-            }
-
-
-            public function update($instance, $validatedData)
-            {
-                // TODO: Implement update() method.
-            }
-
-
-            public function getFields()
-            {
-                return [
-                    "big_number"   => IntegerField::generate()->readOnly(true)->default(100),
-                    "status"       => BooleanField::generate()->writeOnly(true),
-                    "small_number" => IntegerField::generate()->max(10),
-                    "name"         => StringField::generate(),
-                    "email"        => EmailField::generate()
-                ];
-            }
-        };
-
+        $this->serializer = new FooSerializer();
         $this->serializer->bind("foo_serializer", null);
     }
 
@@ -106,5 +81,31 @@ class SerializerTest extends TestCase {
 
         $this->assertEquals(true, $this->serializer->isValid());
         $this->assertEquals($output, $this->serializer->data());
+    }
+}
+
+class FooSerializer extends Serializer {
+
+    public function create($validatedData)
+    {
+        // TODO: Implement create() method.
+    }
+
+
+    public function update($instance, $validatedData)
+    {
+        // TODO: Implement update() method.
+    }
+
+
+    public function getFields()
+    {
+        return [
+            "big_number"   => IntegerField::generate()->readOnly(true)->default(100),
+            "status"       => BooleanField::generate()->writeOnly(true),
+            "small_number" => IntegerField::generate()->max(10),
+            "name"         => StringField::generate(),
+            "email"        => EmailField::generate()
+        ];
     }
 }
