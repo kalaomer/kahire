@@ -28,9 +28,27 @@ class FieldTestCase extends TestCase {
     }
 
 
+    public function getValidInputs()
+    {
+        return $this->validInputs;
+    }
+
+
+    public function getInvalidInputs()
+    {
+        return $this->invalidInputs;
+    }
+
+
+    public function getOutputs()
+    {
+        return $this->outputs;
+    }
+
+
     public function testValidInputs()
     {
-        foreach ($this->validInputs as $validInput => $validResponse)
+        foreach ($this->getValidInputs() as $validInput => $validResponse)
         {
             $this->assertEquals($validResponse, $this->field->runValidation($validInput));
         }
@@ -39,7 +57,7 @@ class FieldTestCase extends TestCase {
 
     public function testInvalidInputs()
     {
-        foreach ($this->invalidInputs as $invalidInput)
+        foreach ($this->getInvalidInputs() as $invalidInput)
         {
             try
             {
@@ -57,7 +75,7 @@ class FieldTestCase extends TestCase {
 
     public function testOutputs()
     {
-        foreach ($this->outputs as $output => $outputResponse)
+        foreach ($this->getOutputs() as $output => $outputResponse)
         {
             $this->assertEquals($outputResponse, $this->field->toRepresentation($output));
         }

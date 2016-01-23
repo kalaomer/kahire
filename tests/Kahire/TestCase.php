@@ -31,6 +31,8 @@ abstract class TestCase extends BaseTestCase {
 
         $app->make(Kernel::class)->bootstrap();
 
+        $app["config"]->set("filesystems.disks.local.root", storage_path());
+
         return $app;
     }
 }

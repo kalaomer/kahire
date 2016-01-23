@@ -244,7 +244,7 @@ abstract class Serializer extends Field {
             $this->errors        = $e->getErrors();
         }
 
-        if ( $this->errors !== [] and $raiseException )
+        if ( $this->errors !== [ ] and $raiseException )
         {
             throw new ValidationError($this->errors);
         }
@@ -255,7 +255,7 @@ abstract class Serializer extends Field {
 
     public function hasError()
     {
-        return $this->errors !== [];
+        return $this->errors !== [ ];
     }
 
 
