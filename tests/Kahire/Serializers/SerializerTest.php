@@ -38,9 +38,6 @@ class SerializerTest extends TestCase {
     }
 
 
-    /**
-     * @group fails
-     */
     public function testIsValid()
     {
         $validData = [

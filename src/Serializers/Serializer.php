@@ -1,5 +1,6 @@
 <?php namespace Kahire\Serializers;
 
+use Illuminate\Support\Facades\Validator;
 use Kahire\Serializers\Fields\DataTypes\EmptyType;
 use Kahire\Serializers\Fields\Exceptions\SkipField;
 use Kahire\Serializers\Fields\Exceptions\ValidationError;
@@ -110,8 +111,27 @@ abstract class Serializer extends Field {
         $value = $this->toInternalValue($data);
         $this->runValidators($value);
         $value = $this->validate($value);
+        $this->runValidationClause($value);
 
         return $value;
+    }
+
+    public function runValidationClause($data)
+    {
+        $validationClauses = [];
+
+        /* @var $field Field */
+        foreach ($this->fields as $field)
+        {
+            $validationClauses[$field->source()] = $field->getValidationClause();
+        }
+
+        $validator = Validator::make($data, $validationClauses);
+
+        if ( $validator->fails() )
+        {
+            throw new ValidationError($validator->errors()->all());
+        }
     }
 
 

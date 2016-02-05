@@ -68,6 +68,9 @@ class ModelViewSetTest extends TestCase {
     }
 
 
+    /**
+     * @group development
+     */
     public function testUpdate()
     {
         Foo::forceCreate($this->validData);
@@ -79,6 +82,7 @@ class ModelViewSetTest extends TestCase {
         $this->put("foo/1", $update);
 
         $update["string"] = $this->validData["string"];
+
         $this->assertResponseOk();
         $this->seeJsonEquals($update);
     }
