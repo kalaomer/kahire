@@ -6,7 +6,7 @@ REST Framework for Laravel. This framework inspired by [django-rest-framework](h
 - Prepare useful fields.
   - FileField
   - ChoiceField
-  - DatetimeField
+  - DateTimeField
   - FloatField
 - Serializer.
 - Viewset.
