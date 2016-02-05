@@ -1,6 +1,7 @@
 <?php namespace Kahire\Tests\Serializers\Fields;
 
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\URL;
 use Kahire\Serializers\Fields\Exceptions\ValidationError;
 use Kahire\Serializers\Fields\FileField;
 use Symfony\Component\HttpFoundation\File\File;
@@ -14,19 +15,24 @@ class FileFieldTest extends FieldTestCase {
      */
     public $file;
 
+    /**
+     * @var FileField
+     */
+    public $field;
+
 
     public function setUp()
     {
         parent::setUp();
 
-        Storage::put("foo.txt", "Hi!");
-        $this->file = new File(storage_path("foo.txt"));
+        Storage::put("tmp/foo.txt", "Hi!");
+        $this->file = new File(storage_path("app/tmp/foo.txt"));
     }
 
 
     public function tearDown()
     {
-        Storage::delete("foo.txt");
+        Storage::delete("tmp/foo.txt");
 
         parent::tearDown();
     }
@@ -34,7 +40,9 @@ class FileFieldTest extends FieldTestCase {
 
     public function testFileInput()
     {
-        $this->assertEquals($this->file, $this->field->runValidation($this->file));
+        $this->assertEquals("local/foo.txt", $this->field->subDir("local")->runValidation($this->file));
+
+        Storage::delete("local/foo.txt");
     }
 
 
@@ -47,7 +55,9 @@ class FileFieldTest extends FieldTestCase {
 
     public function testFileOutput()
     {
-        $this->assertEquals($this->file->getRealPath(), $this->field->toRepresentation($this->file));
+        $this->assertEquals(URL::to("file.txt"), $this->field->toRepresentation("file.txt"));
+        $this->assertEquals(URL::to("folder/file.txt"),
+            $this->field->urlPrefix("folder")->toRepresentation("file.txt"));
     }
 
 }
