@@ -30,7 +30,7 @@ trait RequiredAttribute {
 
     public function getRequiredValidationRule()
     {
-        if ( $this->required )
+        if ( $this->required and ! $this->root->partial())
         {
             return [ "required" ];
         }
