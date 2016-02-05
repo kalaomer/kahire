@@ -12,7 +12,7 @@ class EmailFieldTest extends FieldTestCase {
     public $field;
 
     public $validInputs = [
-        "foo@bar.com" => "foo@bar.com"
+        [ "foo@bar.com", "foo@bar.com" ]
     ];
 
     public $invalidInputs = [
@@ -21,6 +21,6 @@ class EmailFieldTest extends FieldTestCase {
     ];
 
     public $outputs = [
-        "foo@bar.com" => "foo@bar.com"
+        [ "foo@bar.com", "foo@bar.com" ]
     ];
 }

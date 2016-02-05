@@ -13,8 +13,8 @@ class IntegerFieldTest extends FieldTestCase {
     public $fieldClass = IntegerField::class;
 
     public $validInputs = [
-        "123" => 123,
-        123   => 123
+        [ "123", 123 ],
+        [ 123, 123 ]
     ];
 
     public $invalidInputs = [

@@ -12,23 +12,23 @@ class BooleanFieldTest extends FieldTestCase {
     public $field;
 
     public $validInputs = [
-        "t"    => true,
-        "T"    => true,
-        "true" => true,
-        "True" => true,
-        "TRUE" => true,
-        "1"    => true,
-        1      => true,
-        true   => true,
+        [ "t", true ],
+        [ "T", true ],
+        [ "true", true ],
+        [ "True", true ],
+        [ "TRUE", true ],
+        [ "1", true ],
+        [ 1, true ],
+        [ true, true ],
 
-        "f"     => false,
-        "F"     => false,
-        "false" => false,
-        "False" => false,
-        "FALSE" => false,
-        "0"     => false,
-        0       => false,
-        false   => false
+        [ "f", false ],
+        [ "F", false ],
+        [ "false", false ],
+        [ "False", false ],
+        [ "FALSE", false ],
+        [ "0", false ],
+        [ 0, false ],
+        [ false, false ]
     ];
 
     public $invalidInputs = [
@@ -39,6 +39,6 @@ class BooleanFieldTest extends FieldTestCase {
     ];
 
     public $outputs = [
-        "1" => true
+        [ "1", true ]
     ];
 }

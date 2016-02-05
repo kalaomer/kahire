@@ -5,6 +5,7 @@ use Kahire\Serializers\Fields\Exceptions\AttributeError;
 use Kahire\Serializers\Fields\Exceptions\SkipField;
 use Kahire\Serializers\Fields\Exceptions\ValidationError;
 use Kahire\Serializers\Fields\Field;
+use Kahire\Serializers\Serializer;
 use Kahire\Tests\TestCase;
 
 class FieldTest extends TestCase {
@@ -20,8 +21,9 @@ class FieldTest extends TestCase {
         parent::setUp();
 
         $this->field = new FooField();
+        $serializer = new FooSerializer();
 
-        $this->field->bind("foo", null);
+        $this->field->bind("foo", $serializer);
     }
 
 
@@ -76,25 +78,23 @@ class FieldTest extends TestCase {
 
     public function testValidationRulesStringRule()
     {
-        $this->field->addValidationRules([ "integer", "min:100" ]);
+        $this->field->required(false)->addValidationRules([ "integer", "min:100" ]);
 
-        $this->setExpectedException(ValidationError::class);
-        $this->field->runValidation(10);
+        $this->assertEquals($this->field->getValidationClause(), "integer|min:100");
     }
 
 
     public function testValidationRulesKeyRule()
     {
-        $this->field->addValidationRules([ "integer", "max" => 100 ]);
+        $this->field->required(false)->addValidationRules([ "integer", "max" => 100 ]);
 
-        $this->setExpectedException(ValidationError::class);
-        $this->field->runValidation(300);
+        $this->assertEquals($this->field->getValidationClause(), "integer|max:100");
     }
 
 
     public function testBind()
     {
-        $parent = clone $this->field;
+        $parent = new FooSerializer();
         $this->field->bind("foo", $parent);
 
         $parentAttribute = \PHPUnit_Framework_Assert::readAttribute($this->field, "parent");
@@ -214,5 +214,25 @@ class Validator {
         }
 
         return $value;
+    }
+}
+
+class FooSerializer extends Serializer {
+
+    public function getFields()
+    {
+        return [];
+    }
+
+
+    public function create($validatedData)
+    {
+        // TODO: Implement create() method.
+    }
+
+
+    public function update($instance, $validatedData)
+    {
+        // TODO: Implement update() method.
     }
 }

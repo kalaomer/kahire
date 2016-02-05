@@ -13,13 +13,13 @@ class StringFieldTest extends FieldTestCase {
     public $fieldClass = StringField::class;
 
     public $validInputs = [
-        "Foo" => "Foo",
-        123   => "123"
+        [ "Foo", "Foo" ],
+        [ 123, "123" ]
     ];
 
     public $outputs = [
-        "Foo" => "Foo",
-        123   => "123"
+        [ "Foo", "Foo" ],
+        [ 123, "123" ]
     ];
 
 

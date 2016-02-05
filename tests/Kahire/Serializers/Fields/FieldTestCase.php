@@ -2,6 +2,7 @@
 
 use Kahire\Serializers\Fields\Exceptions\ValidationError;
 use Kahire\Serializers\Fields\Field;
+use Kahire\Serializers\Serializer;
 use Kahire\Tests\TestCase;
 
 class FieldTestCase extends TestCase {
@@ -25,6 +26,10 @@ class FieldTestCase extends TestCase {
         parent::setUp();
 
         $this->field = new $this->fieldClass();
+
+        $serializer = new FooSerializer();
+
+        $this->field->bind("field", $serializer);
     }
 
 
@@ -48,8 +53,10 @@ class FieldTestCase extends TestCase {
 
     public function testValidInputs()
     {
-        foreach ($this->getValidInputs() as $validInput => $validResponse)
+        foreach ($this->getValidInputs() as $input)
         {
+            list( $validInput, $validResponse ) = $input;
+
             $this->assertEquals($validResponse, $this->field->runValidation($validInput));
         }
     }
@@ -75,9 +82,28 @@ class FieldTestCase extends TestCase {
 
     public function testOutputs()
     {
-        foreach ($this->getOutputs() as $output => $outputResponse)
+        foreach ($this->getOutputs() as $output)
         {
-            $this->assertEquals($outputResponse, $this->field->toRepresentation($output));
+            list( $validOutput, $validResponse ) = $output;
+
+            $this->assertEquals($validResponse, $this->field->toRepresentation($validOutput));
         }
+    }
+}
+
+class FooSerializer extends Serializer {
+    public function getFields()
+    {
+        return [];
+    }
+
+    public function update($instance, $validatedData)
+    {
+        // TODO: Implement update() method.
+    }
+
+    public function create($validatedData)
+    {
+        // TODO: Implement create() method.
     }
 }
