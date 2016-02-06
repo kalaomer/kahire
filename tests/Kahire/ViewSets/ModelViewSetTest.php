@@ -68,9 +68,6 @@ class ModelViewSetTest extends TestCase {
     }
 
 
-    /**
-     * @group development
-     */
     public function testUpdate()
     {
         Foo::forceCreate($this->validData);

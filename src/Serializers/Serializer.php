@@ -116,7 +116,11 @@ abstract class Serializer extends Field {
         return $value;
     }
 
-    public function runValidationClause($data)
+
+    /**
+     * @return array
+     */
+    public function getChildFieldValidationClauses()
     {
         $validationClauses = [];
 
@@ -126,7 +130,12 @@ abstract class Serializer extends Field {
             $validationClauses[$field->source()] = $field->getValidationClause();
         }
 
-        $validator = Validator::make($data, $validationClauses);
+        return $validationClauses;
+    }
+
+    public function runValidationClause($data)
+    {
+        $validator = Validator::make($data, $this->getChildFieldValidationClauses());
 
         if ( $validator->fails() )
         {
