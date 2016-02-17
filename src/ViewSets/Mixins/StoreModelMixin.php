@@ -27,8 +27,6 @@ trait StoreModelMixin {
 
         $this->performStore($serializer);
 
-        return $request->all();
-
         return new JsonResponse($serializer->data(), JsonResponse::HTTP_CREATED);
     }
 

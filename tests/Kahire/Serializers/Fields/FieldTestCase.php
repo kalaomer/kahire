@@ -92,15 +92,18 @@ class FieldTestCase extends TestCase {
 }
 
 class FooSerializer extends Serializer {
-    public function getFields()
+
+    public function generateFields()
     {
-        return [];
+        return [ ];
     }
+
 
     public function update($instance, $validatedData)
     {
         // TODO: Implement update() method.
     }
+
 
     public function create($validatedData)
     {

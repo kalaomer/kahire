@@ -11,7 +11,7 @@ class ValidationMiddlewareTest extends TestCase {
             "integer" => "string"
         ];
 
-        $this->post("foo", $invalidData);
+        $this->post("basic", $invalidData);
         $this->assertResponseStatus(Response::HTTP_BAD_REQUEST);
         $this->seeJson();
     }

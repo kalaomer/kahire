@@ -53,9 +53,12 @@ class DateTimeField extends Field {
     {
         foreach ($this->inputFormats as $inputFormat)
         {
-            try {
+            try
+            {
                 return Carbon::createFromFormat($inputFormat, $dateString);
-            } catch (InvalidArgumentException $e) {
+            }
+            catch (InvalidArgumentException $e)
+            {
             }
         }
 
@@ -122,9 +125,10 @@ class DateTimeField extends Field {
         return parent::runValidationClause($data);
     }
 
+
     protected function getDateFormatValidationRule()
     {
-        return ["date_format" => $this->outputFormat];
+        return [ "date_format" => $this->outputFormat ];
     }
 
 }

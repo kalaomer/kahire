@@ -1,3 +1,4 @@
 <?php
 
-Route::resource("foo", "\\TestSubject\\Http\\Controllers\\FooController");
+Route::resource("basic", "\\TestSubject\\Http\\Controllers\\BasicController");
+Route::resource("article", "\\TestSubject\\Http\\Controllers\\ArticleController");

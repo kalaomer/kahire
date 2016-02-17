@@ -1,11 +1,11 @@
 <?php namespace Kahire\Tests\Serializers;
 
-use Kahire\Serializers\Fields\IntegerField;
-use Kahire\Serializers\Fields\StringField;
 use Kahire\Serializers\ModelSerializer;
 use Kahire\Tests\TestCase;
 use Kahire\Tests\UseTestDatabase;
-use TestSubject\Foo;
+use TestSubject\Basic;
+use TestSubject\Http\Serializers\ArticleSerializer;
+use TestSubject\Http\Serializers\BasicSerializer;
 
 class ModelSerializerTest extends TestCase {
 
@@ -14,14 +14,20 @@ class ModelSerializerTest extends TestCase {
     /**
      * @var ModelSerializer
      */
-    public $serializer;
+    public $basicSerializer;
+
+    /**
+     * @var ModelSerializer
+     */
+    public $articleSerializer;
 
 
     public function setUp()
     {
         parent::setUp();
 
-        $this->serializer = new FooModelSerializer();
+        $this->basicSerializer   = new BasicSerializer();
+        $this->articleSerializer = new ArticleSerializer();
     }
 
 
@@ -32,10 +38,10 @@ class ModelSerializerTest extends TestCase {
             "integer" => 1
         ];
 
-        $this->serializer->data($validData)->isValid();
-        $this->serializer->save();
+        $this->basicSerializer->data($validData)->isValid();
+        $this->basicSerializer->save();
 
-        $this->assertEquals($validData, Foo::all("string", "integer")->last()->toArray());
+        $this->assertEquals($validData, Basic::all("string", "integer")->last()->toArray());
     }
 
 
@@ -46,7 +52,7 @@ class ModelSerializerTest extends TestCase {
             "integer" => 1
         ];
 
-        $instance          = new Foo();
+        $instance          = new Basic();
         $instance->string  = "string";
         $instance->integer = 1;
         $instance->save();
@@ -57,26 +63,42 @@ class ModelSerializerTest extends TestCase {
 
         $validData["string"] = $validUpdate["string"];
 
-        $this->serializer->instance($instance)->data($validUpdate)->partial(true);
-        $this->assertEquals(true, $this->serializer->isValid());
+        $this->basicSerializer->instance($instance)->data($validUpdate)->partial(true);
+        $this->assertEquals(true, $this->basicSerializer->isValid());
 
-        $this->serializer->save();
+        $this->basicSerializer->save();
 
         $this->assertEquals($validData,
-            Foo::select("string", "integer")->where("id", $instance->id)->first()->toArray());
+            Basic::select("string", "integer")->where("id", $instance->id)->first()->toArray());
     }
-}
-
-class FooModelSerializer extends ModelSerializer {
-
-    public $model = Foo::class;
 
 
-    public function getFields()
+    public function testGetOneToOneFields()
     {
-        return [
-            "string"  => StringField::generate(),
-            "integer" => IntegerField::generate()
+        $oneToOneFields = [
+            $this->articleSerializer->getFields()["author"]
         ];
+
+        $this->assertEquals($this->articleSerializer->getOneToOneRelations(), $oneToOneFields);
+    }
+
+
+    public function testOneToManyFields()
+    {
+        $oneToManyFields = [
+            $this->articleSerializer->getFields()["tags"]
+        ];
+
+        $this->assertEquals($this->articleSerializer->getOneToManyRelations(), $oneToManyFields);
+    }
+
+
+    public function testBaseFields()
+    {
+        $baseFields = [
+            $this->articleSerializer->getFields()["title"]
+        ];
+
+        $this->assertEquals($this->articleSerializer->getBaseFields(), $baseFields);
     }
 }

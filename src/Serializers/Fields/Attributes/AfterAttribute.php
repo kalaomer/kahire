@@ -9,11 +9,12 @@ trait AfterAttribute {
      */
     protected $after;
 
-    public function after($value=null)
+
+    public function after($value = null)
     {
-        if ($value !== null)
+        if ( $value !== null )
         {
-            if (! is_string($value) and ! $value instanceof DateTime)
+            if ( ! is_string($value) and ! $value instanceof DateTime )
             {
                 throw new \InvalidArgumentException("after value must be string or datetime.");
             }
@@ -26,18 +27,19 @@ trait AfterAttribute {
         return $this->after;
     }
 
+
     public function getAfterValidationRule()
     {
-        if ($this->after !== null)
+        if ( $this->after !== null )
         {
-            if ($this->after instanceof \DateTime)
+            if ( $this->after instanceof \DateTime )
             {
-                return ["after" => $this->after->format($this->outputFormat)];
+                return [ "after" => $this->after->format($this->outputFormat) ];
             }
 
-            return ["after" => $this->after];
+            return [ "after" => $this->after ];
         }
 
-        return [];
+        return [ ];
     }
 }

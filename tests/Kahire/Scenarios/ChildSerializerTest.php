@@ -12,6 +12,7 @@ class ChildSerializerTest extends TestCase {
      */
     protected $serializer;
 
+
     public function setUp()
     {
         parent::setUp();
@@ -25,8 +26,8 @@ class ChildSerializerTest extends TestCase {
     {
         $validData = [
             "integer" => 1,
-            "child" => [
-                "string" => "string",
+            "child"   => [
+                "string"  => "string",
                 "integer" => 10
             ]
         ];
@@ -38,7 +39,7 @@ class ChildSerializerTest extends TestCase {
     public function testChildFieldValidationClauses()
     {
         $validationRules = [
-            "child" => "required",
+            "child"   => "required",
             "integer" => "integer|required"
         ];
 
@@ -48,10 +49,10 @@ class ChildSerializerTest extends TestCase {
 
 class FatherSerializer extends Serializer {
 
-    public function getFields()
+    public function generateFields()
     {
         return [
-            "child" => ChildSerializer::generate(),
+            "child"   => ChildSerializer::generate(),
             "integer" => IntegerField::generate()
         ];
     }
@@ -72,10 +73,10 @@ class FatherSerializer extends Serializer {
 
 class ChildSerializer extends Serializer {
 
-    public function getFields()
+    public function generateFields()
     {
         return [
-            "string" => StringField::generate(),
+            "string"  => StringField::generate(),
             "integer" => IntegerField::generate()
         ];
     }

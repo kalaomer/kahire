@@ -2,7 +2,7 @@
 
 use Illuminate\Database\Eloquent\Model;
 
-class Foo extends Model {
+class Basic extends Model {
 
-    protected $table = "foo";
+    protected $table = "basic";
 }

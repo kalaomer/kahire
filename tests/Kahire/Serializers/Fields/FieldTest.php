@@ -20,8 +20,8 @@ class FieldTest extends TestCase {
     {
         parent::setUp();
 
-        $this->field = new FooField();
-        $serializer = new FooSerializer();
+        $this->field = new BaseField();
+        $serializer  = new BaseSerializer();
 
         $this->field->bind("foo", $serializer);
     }
@@ -94,7 +94,7 @@ class FieldTest extends TestCase {
 
     public function testBind()
     {
-        $parent = new FooSerializer();
+        $parent = new BaseSerializer();
         $this->field->bind("foo", $parent);
 
         $parentAttribute = \PHPUnit_Framework_Assert::readAttribute($this->field, "parent");
@@ -158,7 +158,7 @@ class FieldTest extends TestCase {
     }
 }
 
-class FooField extends Field {
+class BaseField extends Field {
 
     public function toInternalValue($value)
     {
@@ -217,11 +217,11 @@ class Validator {
     }
 }
 
-class FooSerializer extends Serializer {
+class BaseSerializer extends Serializer {
 
-    public function getFields()
+    public function generateFields()
     {
-        return [];
+        return [ ];
     }
 
 

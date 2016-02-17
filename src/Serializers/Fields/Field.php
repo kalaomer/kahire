@@ -8,6 +8,7 @@ use Kahire\Serializers\Fields\Exceptions\AttributeError;
 use Kahire\Serializers\Fields\Exceptions\SkipField;
 use Kahire\Serializers\Fields\Exceptions\ValidationError;
 use Kahire\Serializers\Serializer;
+use ReflectionClass;
 
 /**
  * Class Field
@@ -81,7 +82,7 @@ abstract class Field {
      */
     public static function generate()
     {
-        $reflection = new \ReflectionClass(static::class);
+        $reflection = new ReflectionClass(static::class);
 
         return $reflection->newInstanceArgs(func_get_args());
     }

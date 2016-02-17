@@ -1,12 +1,4 @@
-<?php
-/**
- * Created by PhpStorm.
- * User: kalaomer
- * Date: 15.01.2016
- * Time: 19:20
- */
-
-namespace Kahire\Serializers\Fields\Attributes;
+<?php namespace Kahire\Serializers\Fields\Attributes;
 
 trait ReadWriteOnlyAttribute {
 

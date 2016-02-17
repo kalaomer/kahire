@@ -79,6 +79,20 @@ class SerializerTest extends TestCase {
         $this->assertEquals(true, $this->serializer->isValid());
         $this->assertEquals($output, $this->serializer->data());
     }
+
+
+    public function testSource()
+    {
+        $serializer = new SourceSerializer();
+        $validData  = [
+            "string" => "string"
+        ];
+
+        $serializer->data($validData)->isValid(true);
+
+        $this->assertEquals($serializer->getValidatedData(), [ "parent" => [ "child" => "string" ] ]);
+    }
+
 }
 
 class FooSerializer extends Serializer {
@@ -95,7 +109,7 @@ class FooSerializer extends Serializer {
     }
 
 
-    public function getFields()
+    public function generateFields()
     {
         return [
             "big_number"   => IntegerField::generate()->readOnly(true)->default(100),
@@ -103,6 +117,28 @@ class FooSerializer extends Serializer {
             "small_number" => IntegerField::generate()->max(10),
             "name"         => StringField::generate(),
             "email"        => EmailField::generate()
+        ];
+    }
+}
+
+class SourceSerializer extends Serializer {
+
+    public function update($instance, $validatedData)
+    {
+        // TODO: Implement update() method.
+    }
+
+
+    public function create($validatedData)
+    {
+        // TODO: Implement create() method.
+    }
+
+
+    public function generateFields()
+    {
+        return [
+            "string" => StringField::generate()->source("parent.child")
         ];
     }
 }

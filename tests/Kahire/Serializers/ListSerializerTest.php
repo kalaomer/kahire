@@ -34,7 +34,7 @@ class ListSerializerTest extends TestCase {
 
 class IntegerSerializer extends Serializer {
 
-    public function getFields()
+    public function generateFields()
     {
         return [
             "integer" => IntegerField::generate()

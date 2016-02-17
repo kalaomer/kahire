@@ -1,5 +1,7 @@
 <?php namespace Kahire\Serializers\Fields\Exceptions;
 
+use League\Flysystem\Exception;
+
 class ValidationError extends \Exception {
 
     /**

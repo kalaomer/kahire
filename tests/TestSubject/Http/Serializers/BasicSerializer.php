@@ -3,14 +3,14 @@
 use Kahire\Serializers\Fields\IntegerField;
 use Kahire\Serializers\Fields\StringField;
 use Kahire\Serializers\ModelSerializer;
-use TestSubject\Foo;
+use TestSubject\Basic;
 
-class FooSerializer extends ModelSerializer {
+class BasicSerializer extends ModelSerializer {
 
-    protected $model = Foo::class;
+    protected $model = Basic::class;
 
 
-    public function getFields()
+    public function generateFields()
     {
         return [
             "string"  => StringField::generate(),

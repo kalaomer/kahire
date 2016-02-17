@@ -1,5 +1,6 @@
 <?php namespace Kahire\Serializers;
 
+use AssertionError;
 use Illuminate\Support\Facades\Validator;
 use Kahire\Serializers\Fields\DataTypes\EmptyType;
 use Kahire\Serializers\Fields\Exceptions\SkipField;
@@ -18,7 +19,7 @@ abstract class Serializer extends Field {
     /**
      * @return array
      */
-    abstract public function getFields();
+    abstract public function generateFields();
 
 
     abstract public function create($validatedData);
@@ -49,8 +50,14 @@ abstract class Serializer extends Field {
         parent::__construct();
 
         $this->addAttributes("partial", "instance", "context");
-        $this->fields = $this->getFields();
+        $this->fields = $this->generateFields();
         $this->setFields();
+    }
+
+
+    public function getFields()
+    {
+        return $this->fields;
     }
 
 
@@ -122,7 +129,7 @@ abstract class Serializer extends Field {
      */
     public function getChildFieldValidationClauses()
     {
-        $validationClauses = [];
+        $validationClauses = [ ];
 
         /* @var $field Field */
         foreach ($this->fields as $field)
@@ -132,6 +139,7 @@ abstract class Serializer extends Field {
 
         return $validationClauses;
     }
+
 
     public function runValidationClause($data)
     {
@@ -292,7 +300,7 @@ abstract class Serializer extends Field {
      * @param array|null $initialData
      *
      * @return $this|array|null
-     * @throws \AssertionError
+     * @throws AssertionError
      */
     public function data(array $initialData = null)
     {
@@ -305,7 +313,7 @@ abstract class Serializer extends Field {
 
         if ( $this->initialData and ! $this->validatedData === null )
         {
-            throw new \AssertionError("Call .isValid() before calling data.");
+            throw new AssertionError("Call .isValid() before calling data.");
         }
 
         if ( $this->_data === null )
@@ -343,6 +351,12 @@ abstract class Serializer extends Field {
         }
 
         return $this->instance;
+    }
+
+
+    public function getValidatedData()
+    {
+        return $this->validatedData;
     }
 
 }

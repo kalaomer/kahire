@@ -42,7 +42,7 @@ class ListSerializer extends Serializer {
     }
 
 
-    public function getFields()
+    public function generateFields()
     {
         return $this->fields;
     }

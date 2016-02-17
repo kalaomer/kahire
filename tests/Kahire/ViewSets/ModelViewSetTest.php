@@ -1,19 +1,13 @@
 <?php namespace tests\Kahire\ViewSets;
 
+use Illuminate\Http\Response;
 use Kahire\Tests\TestCase;
 use Kahire\Tests\UseTestDatabase;
-use Kahire\ViewSets\ModelViewSet;
-use TestSubject\Foo;
-use TestSubject\Http\Controllers\FooController;
+use TestSubject\Basic;
 
 class ModelViewSetTest extends TestCase {
 
     use UseTestDatabase;
-
-    /**
-     * @var ModelViewSet
-     */
-    public $viewSet;
 
     /**
      * @var array
@@ -25,10 +19,6 @@ class ModelViewSetTest extends TestCase {
     {
         parent::setUp();
 
-        $this->app["config"]->set("debug", "true");
-
-        $this->viewSet = FooController::class;
-
         $this->validData = [
             "string"  => "string",
             "integer" => 1
@@ -38,9 +28,9 @@ class ModelViewSetTest extends TestCase {
 
     public function testCreate()
     {
-        $this->post("foo", $this->validData);
+        $this->post("basic", $this->validData);
 
-        $this->assertResponseOk();
+        $this->assertResponseStatus(Response::HTTP_CREATED);
         $this->seeJsonEquals($this->validData);
         $this->seeJson();
     }
@@ -48,9 +38,9 @@ class ModelViewSetTest extends TestCase {
 
     public function testShow()
     {
-        Foo::forceCreate($this->validData);
+        Basic::forceCreate($this->validData);
 
-        $this->get("foo/1");
+        $this->get("basic/1");
         $this->assertResponseOk();
         $this->seeJsonEquals($this->validData);
         $this->seeJson();
@@ -59,9 +49,9 @@ class ModelViewSetTest extends TestCase {
 
     public function testIndex()
     {
-        Foo::forceCreate($this->validData);
+        Basic::forceCreate($this->validData);
 
-        $this->get("foo/");
+        $this->get("basic/");
         $this->assertResponseOk();
         $this->seeJsonEquals([ $this->validData ]);
         $this->seeJson();
@@ -70,13 +60,13 @@ class ModelViewSetTest extends TestCase {
 
     public function testUpdate()
     {
-        Foo::forceCreate($this->validData);
+        Basic::forceCreate($this->validData);
 
         $update = [
             "integer" => 2
         ];
 
-        $this->put("foo/1", $update);
+        $this->put("basic/1", $update);
 
         $update["string"] = $this->validData["string"];
 

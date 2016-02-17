@@ -9,11 +9,12 @@ trait BeforeAttribute {
      */
     protected $before;
 
+
     public function before($value)
     {
-        if ($value !== null)
+        if ( $value !== null )
         {
-            if (! is_string($value) and ! $value instanceof DateTime)
+            if ( ! is_string($value) and ! $value instanceof DateTime )
             {
                 throw new \InvalidArgumentException("before value must be string or datetime.");
             }
@@ -26,18 +27,19 @@ trait BeforeAttribute {
         return $this->before;
     }
 
+
     public function getBeforeValidationRule()
     {
-        if ($this->before !== null)
+        if ( $this->before !== null )
         {
-            if ($this->before instanceof DateTime)
+            if ( $this->before instanceof DateTime )
             {
-                return ["before" => $this->before->format($this->outputFormat)];
+                return [ "before" => $this->before->format($this->outputFormat) ];
             }
 
-            return ["before" => $this->before];
+            return [ "before" => $this->before ];
         }
 
-        return [];
+        return [ ];
     }
 }
