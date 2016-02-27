@@ -10,11 +10,21 @@
  *
  * @package Kahire\Serializers\Fields\DataTypes
  */
+/**
+ * Class EmptyType
+ * @package Kahire\Serializers\Fields\DataTypes
+ */
 class EmptyType {
 
+    /**
+     * @var EmptyType
+     */
     public static $instance = null;
 
 
+    /**
+     * @return EmptyType
+     */
     public static function get()
     {
         if ( self::$instance === null )
@@ -26,6 +36,11 @@ class EmptyType {
     }
 
 
+    /**
+     * @param $value
+     *
+     * @return bool
+     */
     public static function isEmpty($value)
     {
         return $value === self::$instance;

@@ -2,6 +2,10 @@
 
 use League\Flysystem\Exception;
 
+/**
+ * Class ValidationError
+ * @package Kahire\Serializers\Fields\Exceptions
+ */
 class ValidationError extends \Exception {
 
     /**
@@ -10,6 +14,13 @@ class ValidationError extends \Exception {
     protected $errors = [ ];
 
 
+    /**
+     * ValidationError constructor.
+     *
+     * @param string         $message
+     * @param int            $code
+     * @param Exception|null $previous
+     */
     public function __construct($message, $code = 1, Exception $previous = null)
     {
         if ( ! is_array($message) )
@@ -27,6 +38,11 @@ class ValidationError extends \Exception {
     }
 
 
+    /**
+     * @param $rawMessage
+     *
+     * @return string
+     */
     protected function convertMessage($rawMessage)
     {
         if ( is_string($rawMessage) )
@@ -54,6 +70,9 @@ class ValidationError extends \Exception {
     }
 
 
+    /**
+     * @return array|string
+     */
     public function getErrors()
     {
         return $this->errors;

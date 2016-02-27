@@ -126,6 +126,9 @@ class DateTimeField extends Field {
     }
 
 
+    /**
+     * @return array
+     */
     protected function getDateFormatValidationRule()
     {
         return [ "date_format" => $this->outputFormat ];

@@ -2,6 +2,10 @@
 
 use DateTime;
 
+/**
+ * Class BeforeAttribute
+ * @package Kahire\Serializers\Fields\Attributes
+ */
 trait BeforeAttribute {
 
     /**
@@ -10,6 +14,11 @@ trait BeforeAttribute {
     protected $before;
 
 
+    /**
+     * @param $value
+     *
+     * @return $this|string
+     */
     public function before($value)
     {
         if ( $value !== null )
@@ -28,6 +37,9 @@ trait BeforeAttribute {
     }
 
 
+    /**
+     * @return array
+     */
     public function getBeforeValidationRule()
     {
         if ( $this->before !== null )

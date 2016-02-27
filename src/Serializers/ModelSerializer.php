@@ -5,6 +5,10 @@ use Kahire\Serializers\Fields\DateTimeField;
 use Kahire\Serializers\Fields\Field;
 use Kahire\Serializers\Fields\PrimaryKeyField;
 
+/**
+ * Class ModelSerializer
+ * @package Kahire\Serializers
+ */
 abstract class ModelSerializer extends Serializer {
 
     /**
@@ -89,6 +93,11 @@ abstract class ModelSerializer extends Serializer {
     }
 
 
+    /**
+     * @param $validData
+     *
+     * @return Model
+     */
     public function create($validData)
     {
         $instance = $this->createInstance($validData);
@@ -103,6 +112,13 @@ abstract class ModelSerializer extends Serializer {
     }
 
 
+    /**
+     * @param       $validatedData
+     * @param Model $instance
+     *
+     * @throws Fields\Exceptions\ValidationError
+     * @throws \AssertionError
+     */
     public function createOneToOneRelations($validatedData, Model $instance)
     {
         /* @var $oneToOneRelation ModelSerializer */
@@ -121,6 +137,10 @@ abstract class ModelSerializer extends Serializer {
     }
 
 
+    /**
+     * @param       $validatedData
+     * @param Model $instance
+     */
     public function createOneToManyRelations($validatedData, Model $instance)
     {
         /* @var $oneToManyRelation ListSerializer */
@@ -189,6 +209,9 @@ abstract class ModelSerializer extends Serializer {
     }
 
 
+    /**
+     * @return array
+     */
     protected function generatePrimaryKeyField()
     {
         if ( $this->usePrimaryKey )
@@ -202,6 +225,9 @@ abstract class ModelSerializer extends Serializer {
     }
 
 
+    /**
+     * @return array
+     */
     protected function generateTimeStampField()
     {
         if ( $this->useTimeStamps )

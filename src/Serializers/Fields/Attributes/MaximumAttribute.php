@@ -1,7 +1,14 @@
 <?php namespace Kahire\Serializers\Fields\Attributes;
 
+/**
+ * Class MaximumAttribute
+ * @package Kahire\Serializers\Fields\Attributes
+ */
 trait MaximumAttribute {
 
+    /**
+     * @var null
+     */
     protected $max = null;
 
 
@@ -28,6 +35,9 @@ trait MaximumAttribute {
     }
 
 
+    /**
+     * @return array
+     */
     public function getMaximumValidationRule()
     {
         if ( $this->max !== null )

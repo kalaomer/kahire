@@ -2,6 +2,10 @@
 
 use DateTime;
 
+/**
+ * Class AfterAttribute
+ * @package Kahire\Serializers\Fields\Attributes
+ */
 trait AfterAttribute {
 
     /**
@@ -10,6 +14,11 @@ trait AfterAttribute {
     protected $after;
 
 
+    /**
+     * @param null $value
+     *
+     * @return $this|string
+     */
     public function after($value = null)
     {
         if ( $value !== null )
@@ -28,6 +37,9 @@ trait AfterAttribute {
     }
 
 
+    /**
+     * @return array
+     */
     public function getAfterValidationRule()
     {
         if ( $this->after !== null )

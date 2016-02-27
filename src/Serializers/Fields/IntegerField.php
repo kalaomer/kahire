@@ -11,9 +11,18 @@ class IntegerField extends Field {
 
     use MinimumAttribute, MaximumAttribute;
 
+    /**
+     * @var array
+     */
     protected $validationRules = [ "integer" ];
 
 
+    /**
+     * @param $value
+     *
+     * @return int
+     * @throws Exceptions\ValidationError
+     */
     public function toInternalValue($value)
     {
         if ( is_numeric($value) )
@@ -25,6 +34,11 @@ class IntegerField extends Field {
     }
 
 
+    /**
+     * @param $value
+     *
+     * @return int
+     */
     public function toRepresentation($value)
     {
         return (int) $value;

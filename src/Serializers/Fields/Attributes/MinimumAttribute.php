@@ -1,7 +1,14 @@
 <?php namespace Kahire\Serializers\Fields\Attributes;
 
+/**
+ * Class MinimumAttribute
+ * @package Kahire\Serializers\Fields\Attributes
+ */
 trait MinimumAttribute {
 
+    /**
+     * @var null
+     */
     protected $min = null;
 
 
@@ -28,6 +35,9 @@ trait MinimumAttribute {
     }
 
 
+    /**
+     * @return array
+     */
     public function getMinimumValidationRule()
     {
         if ( $this->min !== null )

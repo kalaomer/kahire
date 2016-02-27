@@ -25,26 +25,60 @@ abstract class Field {
     use RequiredAttribute, ReadWriteOnlyAttribute;
 
 
+    /**
+     * @param $value
+     *
+     * @return mixed
+     */
     abstract public function toRepresentation($value);
 
 
+    /**
+     * @param $value
+     *
+     * @return mixed
+     */
     abstract public function toInternalValue($value);
 
 
+    /**
+     * @var bool
+     */
     protected $allowNull = false;
 
+    /**
+     * @var bool
+     */
     protected $allowBlank = false;
 
+    /**
+     * @var null
+     */
     protected $source = null;
 
+    /**
+     * @var array
+     */
     protected $sourceAttr = [ ];
 
+    /**
+     * @var EmptyType|null
+     */
     protected $default;
 
+    /**
+     * @var array
+     */
     protected $validators = [ ];
 
+    /**
+     * @var array
+     */
     protected $validationRules = [ ];
 
+    /**
+     * @var array
+     */
     protected $baseAttributes = [
         "allowNull",
         "allowBlank",
@@ -54,6 +88,9 @@ abstract class Field {
         "validators"
     ];
 
+    /**
+     * @var array
+     */
     protected $attributes = [ ];
 
     /**
@@ -61,6 +98,9 @@ abstract class Field {
      */
     protected $fieldName;
 
+    /**
+     * @var array
+     */
     protected $errorMessages = [
         "required" => "This field is required",
         "invalid"  => "This is not a valid value."
@@ -88,6 +128,9 @@ abstract class Field {
     }
 
 
+    /**
+     * Field constructor.
+     */
     public function __construct()
     {
         array_push($this->attributes, ...$this->baseAttributes);
@@ -95,6 +138,13 @@ abstract class Field {
     }
 
 
+    /**
+     * @param $name
+     * @param $arguments
+     *
+     * @return $this
+     * @throws \Exception
+     */
     public function __call($name, $arguments)
     {
         if ( in_array($name, $this->attributes) )
@@ -113,6 +163,11 @@ abstract class Field {
     }
 
 
+    /**
+     * @param array ...$attributes
+     *
+     * @return $this
+     */
     protected function addAttributes(...$attributes)
     {
         $this->attributes = array_merge($this->attributes, $attributes);
@@ -121,6 +176,10 @@ abstract class Field {
     }
 
 
+    /**
+     * @param $fieldName
+     * @param $parent
+     */
     public function bind($fieldName, $parent)
     {
         $this->fieldName = $fieldName;
@@ -179,6 +238,11 @@ abstract class Field {
     }
 
 
+    /**
+     * @param $values
+     *
+     * @return EmptyType|null
+     */
     public function getValue($values)
     {
         if ( ! array_key_exists($this->fieldName, $values) )
@@ -190,6 +254,10 @@ abstract class Field {
     }
 
 
+    /**
+     * @return EmptyType|mixed|null
+     * @throws SkipField
+     */
     public function getDefault()
     {
         if ( EmptyType::isEmpty($this->default) )
@@ -256,6 +324,11 @@ abstract class Field {
     }
 
 
+    /**
+     * @param $data
+     *
+     * @throws ValidationError
+     */
     public function runValidationClause($data)
     {
         $validationClause = $this->getValidationClause();
@@ -273,6 +346,13 @@ abstract class Field {
     }
 
 
+    /**
+     * @param $data
+     *
+     * @return mixed
+     * @throws SkipField
+     * @throws ValidationError
+     */
     public function runValidation($data)
     {
         list( $isEmpty, $data ) = $this->validateEmptyValues($data);
@@ -290,6 +370,11 @@ abstract class Field {
     }
 
 
+    /**
+     * @param $value
+     *
+     * @throws ValidationError
+     */
     public function runValidators($value)
     {
         $errors = [ ];
@@ -318,6 +403,12 @@ abstract class Field {
     }
 
 
+    /**
+     * @param       $key
+     * @param array ...$args
+     *
+     * @throws ValidationError
+     */
     public function fail($key, ...$args)
     {
         $message = sprintf($this->errorMessages[$key], ...$args);
@@ -326,6 +417,11 @@ abstract class Field {
     }
 
 
+    /**
+     * @param $rules
+     *
+     * @return $this
+     */
     public function addValidationRules($rules)
     {
         $this->validationRules = array_merge($this->validationRules, $rules);
@@ -354,6 +450,9 @@ abstract class Field {
     }
 
 
+    /**
+     * @return string
+     */
     public function getValidationClause()
     {
         $validationRules = array_merge($this->validationRules, $this->getValidationRules());
@@ -388,6 +487,9 @@ abstract class Field {
     }
 
 
+    /**
+     * @return string
+     */
     public function getFieldName()
     {
         return $this->fieldName;

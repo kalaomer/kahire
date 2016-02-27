@@ -22,29 +22,67 @@ abstract class Serializer extends Field {
     abstract public function generateFields();
 
 
+    /**
+     * @param $validatedData
+     *
+     * @return mixed
+     */
     abstract public function create($validatedData);
 
 
+    /**
+     * @param $instance
+     * @param $validatedData
+     *
+     * @return mixed
+     */
     abstract public function update($instance, $validatedData);
 
 
+    /**
+     * @var bool
+     */
     protected $partial = false;
 
+    /**
+     * @var null
+     */
     protected $instance = null;
 
+    /**
+     * @var null
+     */
     protected $initialData = null;
 
+    /**
+     * @var array
+     */
     protected $context = [ ];
 
+    /**
+     * @var array
+     */
     protected $fields = [ ];
 
+    /**
+     * @var array
+     */
     public $errors = [ ];
 
+    /**
+     * @var
+     */
     protected $validatedData;
 
+    /**
+     * @var
+     */
     protected $_data;
 
 
+    /**
+     * Serializer constructor.
+     */
     public function __construct()
     {
         parent::__construct();
@@ -55,6 +93,9 @@ abstract class Serializer extends Field {
     }
 
 
+    /**
+     * @return array
+     */
     public function getFields()
     {
         return $this->fields;
@@ -70,6 +111,9 @@ abstract class Serializer extends Field {
     }
 
 
+    /**
+     *
+     */
     protected function setFields()
     {
         /* @var $field Field */
@@ -80,6 +124,9 @@ abstract class Serializer extends Field {
     }
 
 
+    /**
+     * @return \Generator
+     */
     public function getWritableFields()
     {
         /* @var $field Field */
@@ -93,6 +140,9 @@ abstract class Serializer extends Field {
     }
 
 
+    /**
+     * @return \Generator
+     */
     public function getReadableFields()
     {
         /* @var $field Field */
@@ -106,6 +156,13 @@ abstract class Serializer extends Field {
     }
 
 
+    /**
+     * @param $data
+     *
+     * @return array|mixed
+     * @throws SkipField
+     * @throws ValidationError
+     */
     public function runValidation($data)
     {
         list( $isEmpty, $data ) = $this->validateEmptyValues($data);
@@ -141,6 +198,11 @@ abstract class Serializer extends Field {
     }
 
 
+    /**
+     * @param $data
+     *
+     * @throws ValidationError
+     */
     public function runValidationClause($data)
     {
         $validator = Validator::make($data, $this->getChildFieldValidationClauses());
@@ -152,6 +214,12 @@ abstract class Serializer extends Field {
     }
 
 
+    /**
+     * @param $data
+     *
+     * @return array
+     * @throws ValidationError
+     */
     public function toInternalValue($data)
     {
         if ( ! is_array($data) )
@@ -199,6 +267,13 @@ abstract class Serializer extends Field {
     }
 
 
+    /**
+     * @param $data
+     * @param $keys
+     * @param $value
+     *
+     * @return array
+     */
     protected function setValue(&$data, $keys, $value)
     {
         if ( $keys == [ ] )
@@ -221,6 +296,12 @@ abstract class Serializer extends Field {
     }
 
 
+    /**
+     * @param $instance
+     *
+     * @return array
+     * @throws Fields\Exceptions\AttributeError
+     */
     public function toRepresentation($instance)
     {
         $response = [ ];
@@ -252,6 +333,11 @@ abstract class Serializer extends Field {
     }
 
 
+    /**
+     * @param $fieldName
+     *
+     * @return string
+     */
     protected function getValidationMethodName($fieldName)
     {
         $fieldName = preg_replace_callback('/\_([a-z])/', function ($matches)
@@ -263,12 +349,23 @@ abstract class Serializer extends Field {
     }
 
 
+    /**
+     * @param $attributes
+     *
+     * @return mixed
+     */
     public function validate($attributes)
     {
         return $attributes;
     }
 
 
+    /**
+     * @param bool $raiseException
+     *
+     * @return bool
+     * @throws ValidationError
+     */
     public function isValid($raiseException = false)
     {
         try
@@ -290,6 +387,9 @@ abstract class Serializer extends Field {
     }
 
 
+    /**
+     * @return bool
+     */
     public function hasError()
     {
         return $this->errors !== [ ];
@@ -337,6 +437,11 @@ abstract class Serializer extends Field {
     }
 
 
+    /**
+     * @param array $data
+     *
+     * @return mixed|null
+     */
     public function save(array $data = [ ])
     {
         $validatedData = array_merge($this->validatedData, $data);
@@ -354,6 +459,9 @@ abstract class Serializer extends Field {
     }
 
 
+    /**
+     * @return mixed
+     */
     public function getValidatedData()
     {
         return $this->validatedData;

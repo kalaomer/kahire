@@ -11,15 +11,28 @@ class StringField extends Field {
 
     use MinimumAttribute, MaximumAttribute;
 
+    /**
+     * @var array
+     */
     protected $validationRules = [ "string" ];
 
 
+    /**
+     * @param $value
+     *
+     * @return string
+     */
     public function toRepresentation($value)
     {
         return (string) $value;
     }
 
 
+    /**
+     * @param $value
+     *
+     * @return string
+     */
     public function toInternalValue($value)
     {
         return (string) $value;

@@ -10,10 +10,19 @@ use Kahire\Serializers\Fields\Exceptions\ValidationError;
  */
 class ListSerializer extends Serializer {
 
+    /**
+     * @var bool
+     */
     protected $many = true;
 
+    /**
+     * @var bool
+     */
     protected $allowEmpty = true;
 
+    /**
+     * @var array
+     */
     protected $attributes = [ "allowEmpty" ];
 
     /**
@@ -42,12 +51,20 @@ class ListSerializer extends Serializer {
     }
 
 
+    /**
+     * @return array
+     */
     public function generateFields()
     {
         return $this->fields;
     }
 
 
+    /**
+     * @param $validatedData
+     *
+     * @return array
+     */
     public function create($validatedData)
     {
         $instances = [ ];
@@ -61,12 +78,19 @@ class ListSerializer extends Serializer {
     }
 
 
+    /**
+     * @param $instance
+     * @param $validatedData
+     */
     public function update($instance, $validatedData)
     {
         throw new \BadMethodCallException("Serializers with many=True do not support multiple update by " . "default, only multiple create. For updates it is unclear how to " . "deal with insertions and deletions. If you need to support " . "multiple update, use a `ListSerializer` class and override " . "`.update()` so you can specify the behavior exactly.");
     }
 
 
+    /**
+     * @return array
+     */
     public function getInitial()
     {
         if ( $this->initialData )
@@ -118,6 +142,11 @@ class ListSerializer extends Serializer {
     }
 
 
+    /**
+     * @param $data
+     *
+     * @return array
+     */
     public function toRepresentation($data)
     {
         $values = [ ];

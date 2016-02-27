@@ -1,7 +1,14 @@
 <?php namespace Kahire\Serializers\Fields\Attributes;
 
+/**
+ * Class RequiredAttribute
+ * @package Kahire\Serializers\Fields\Attributes
+ */
 trait RequiredAttribute {
 
+    /**
+     * @var bool
+     */
     protected $required = true;
 
 
@@ -28,6 +35,9 @@ trait RequiredAttribute {
     }
 
 
+    /**
+     * @return array
+     */
     public function getRequiredValidationRule()
     {
         if ( $this->required and ! $this->root->partial() )
