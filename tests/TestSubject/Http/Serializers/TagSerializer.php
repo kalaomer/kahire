@@ -8,6 +8,10 @@ class TagSerializer extends ModelSerializer {
 
     protected $model = Tag::class;
 
+    protected $useTimeStamps = false;
+
+    protected $usePrimaryKey = false;
+
 
     public function generateFields()
     {

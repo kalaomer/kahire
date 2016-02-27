@@ -50,7 +50,7 @@ abstract class Serializer extends Field {
         parent::__construct();
 
         $this->addAttributes("partial", "instance", "context");
-        $this->fields = $this->generateFields();
+        $this->fields = array_merge($this->generateFields(), $this->generateAppendedFields());
         $this->setFields();
     }
 
@@ -203,7 +203,7 @@ abstract class Serializer extends Field {
     {
         if ( $keys == [ ] )
         {
-            return array_merge($data, $value);
+            return $data = array_merge($data, $value);
         }
 
         $last = array_pop($keys);
@@ -357,6 +357,26 @@ abstract class Serializer extends Field {
     public function getValidatedData()
     {
         return $this->validatedData;
+    }
+
+
+    /**
+     * Get custom validation rules from field.
+     * @return array
+     */
+    protected function generateAppendedFields()
+    {
+        $fields = [ ];
+
+        foreach (get_class_methods(get_called_class()) as $method)
+        {
+            if ( preg_match("/^generate[A-Za-z0-9]+Field$/", $method) )
+            {
+                $fields = array_merge($fields, call_user_func([ $this, $method ]));
+            }
+        }
+
+        return $fields;
     }
 
 }

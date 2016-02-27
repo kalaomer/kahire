@@ -9,6 +9,10 @@ class BasicSerializer extends ModelSerializer {
 
     protected $model = Basic::class;
 
+    protected $usePrimaryKey = false;
+
+    protected $useTimeStamps = false;
+
 
     public function generateFields()
     {

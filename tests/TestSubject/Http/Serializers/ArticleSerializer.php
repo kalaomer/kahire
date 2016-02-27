@@ -8,6 +8,10 @@ class ArticleSerializer extends ModelSerializer {
 
     protected $model = Article::class;
 
+    protected $usePrimaryKey = false;
+
+    protected $useTimeStamps = false;
+
 
     public function generateFields()
     {

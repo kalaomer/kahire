@@ -1,7 +1,9 @@
 <?php namespace Kahire\Serializers;
 
 use Illuminate\Database\Eloquent\Model;
+use Kahire\Serializers\Fields\DateTimeField;
 use Kahire\Serializers\Fields\Field;
+use Kahire\Serializers\Fields\PrimaryKeyField;
 
 abstract class ModelSerializer extends Serializer {
 
@@ -9,6 +11,24 @@ abstract class ModelSerializer extends Serializer {
      * @var string
      */
     protected $model;
+
+    /**
+     * For auto append PrimaryKey field
+     * @var bool
+     */
+    protected $usePrimaryKey = true;
+
+    /**
+     * PrimaryKey field key
+     * @var string
+     */
+    protected $primaryKey = "id";
+
+    /**
+     * For auto append created_at and updated_at fields
+     * @var bool
+     */
+    protected $useTimeStamps = true;
 
 
     /**
@@ -95,7 +115,7 @@ abstract class ModelSerializer extends Serializer {
 
                 $oneToOneInstance = $oneToOneRelation->save();
 
-                call_user_func([$instance, $oneToOneRelation->getFieldName()])->associate($oneToOneInstance);
+                call_user_func([ $instance, $oneToOneRelation->getFieldName() ])->associate($oneToOneInstance);
             }
         }
     }
@@ -114,7 +134,7 @@ abstract class ModelSerializer extends Serializer {
                 /* @var $child ModelSerializer */
                 foreach ($children as $child)
                 {
-                    call_user_func([$instance, $oneToManyRelation->getFieldName()])->save($child);
+                    call_user_func([ $instance, $oneToManyRelation->getFieldName() ])->save($child);
                 };
             }
         }
@@ -166,6 +186,33 @@ abstract class ModelSerializer extends Serializer {
         $instance->save();
 
         return $instance;
+    }
+
+
+    protected function generatePrimaryKeyField()
+    {
+        if ( $this->usePrimaryKey )
+        {
+            return [
+                $this->primaryKey => PrimaryKeyField::generate()
+            ];
+        }
+
+        return [ ];
+    }
+
+
+    protected function generateTimeStampField()
+    {
+        if ( $this->useTimeStamps )
+        {
+            return [
+                "created_at" => DateTimeField::generate()->required(false)->readOnly(true),
+                "updated_at" => DateTimeField::generate()->required(false)->readOnly(true)
+            ];
+        }
+
+        return [ ];
     }
 
 }
