@@ -1,6 +1,6 @@
 <?php
 
-namespace packages\Kahire\tests\Kahire\Serializers\Fields;
+namespace Kahire\Tests\Serializers\Fields;
 
 use Kahire\Serializers\Fields\DataTypes\EmptyType;
 use Kahire\Serializers\Fields\Exceptions\AttributeError;

@@ -1,6 +1,6 @@
 <?php
 
-namespace tests\Kahire\ViewSets;
+namespace Kahire\Tests\ViewSets;
 
 use Illuminate\Http\Response;
 use Kahire\Tests\TestCase;
