@@ -1,7 +1,14 @@
-<?php namespace Kahire\Serializers\Fields\Attributes;
+<?php
 
-trait ReadWriteOnlyAttribute {
+namespace Kahire\Serializers\Fields\Attributes;
 
+/**
+ * Class ReadWriteOnlyAttribute.
+ * @method $this readOnly(bool $value)
+ * @method $this writeOnly(bool $value)
+ */
+trait ReadWriteOnlyAttribute
+{
     /**
      * @var bool
      */
@@ -12,60 +19,43 @@ trait ReadWriteOnlyAttribute {
      */
     protected $writeOnly = false;
 
-
-    /**
-     * @param null $value
-     *
-     * @return $this|bool
-     */
-    public function readOnly($value = null)
+    protected function getReadOnlyAttribute()
     {
-        if ( $value !== null )
-        {
-            if ( ! is_bool($value) )
-            {
-                throw new \InvalidArgumentException("readOnly must be bool.");
-            }
-
-            if ( $value and $this->writeOnly )
-            {
-                throw new \InvalidArgumentException("readOnly can't be `true` when writeOnly is `true`");
-            }
-
-            $this->readOnly = $value;
-
-            return $this;
-        }
-
         return $this->readOnly;
     }
 
-
-    /**
-     * @param null $value
-     *
-     * @return $this|bool
-     */
-    public function writeOnly($value = null)
+    protected function setReadOnlyAttribute($value)
     {
-        if ( $value !== null )
-        {
-            if ( ! is_bool($value) )
-            {
-                throw new \InvalidArgumentException("writeOnly must be bool.");
-            }
-
-            if ( $value and $this->readOnly )
-            {
-                throw new \InvalidArgumentException("writeOnly can't be `true` when readOnly is `true`");
-            }
-
-            $this->writeOnly = $value;
-
-            return $this;
+        if (! is_bool($value)) {
+            throw new \InvalidArgumentException('readOnly must be bool.');
         }
 
+        if ($value and $this->writeOnly) {
+            throw new \InvalidArgumentException("readOnly can't be `true` when writeOnly is `true`");
+        }
+
+        $this->readOnly = $value;
+
+        return $this;
+    }
+
+    protected function getWriteOnlyAttribute()
+    {
         return $this->writeOnly;
     }
 
+    protected function setWriteOnlyAttribute($value)
+    {
+        if (! is_bool($value)) {
+            throw new \InvalidArgumentException('writeOnly must be bool.');
+        }
+
+        if ($value and $this->readOnly) {
+            throw new \InvalidArgumentException("writeOnly can't be `true` when readOnly is `true`");
+        }
+
+        $this->writeOnly = $value;
+
+        return $this;
+    }
 }

@@ -1,4 +1,6 @@
-<?php namespace Kahire\Serializers;
+<?php
+
+namespace Kahire\Serializers;
 
 use AssertionError;
 use Illuminate\Support\Facades\Validator;
@@ -8,19 +10,18 @@ use Kahire\Serializers\Fields\Exceptions\ValidationError;
 use Kahire\Serializers\Fields\Field;
 
 /**
- * Class Serializer
- * @package Kahire\Serializers
+ * Class Serializer.
  * @method $this partial()
  * @method $this instance()
  * @method $this context()
+ * @method $this data(array $initialData)
  */
-abstract class Serializer extends Field {
-
+abstract class Serializer extends Field
+{
     /**
      * @return array
      */
     abstract public function generateFields();
-
 
     /**
      * @param $validatedData
@@ -29,7 +30,6 @@ abstract class Serializer extends Field {
      */
     abstract public function create($validatedData);
 
-
     /**
      * @param $instance
      * @param $validatedData
@@ -37,7 +37,6 @@ abstract class Serializer extends Field {
      * @return mixed
      */
     abstract public function update($instance, $validatedData);
-
 
     /**
      * @var bool
@@ -57,17 +56,17 @@ abstract class Serializer extends Field {
     /**
      * @var array
      */
-    protected $context = [ ];
+    protected $context = [];
 
     /**
      * @var array
      */
-    protected $fields = [ ];
+    protected $fields = [];
 
     /**
      * @var array
      */
-    public $errors = [ ];
+    public $errors = [];
 
     /**
      * @var
@@ -77,8 +76,7 @@ abstract class Serializer extends Field {
     /**
      * @var
      */
-    protected $_data;
-
+    protected $data;
 
     /**
      * Serializer constructor.
@@ -87,11 +85,10 @@ abstract class Serializer extends Field {
     {
         parent::__construct();
 
-        $this->addAttributes("partial", "instance", "context");
+        $this->addAttributes('partial', 'instance', 'context');
         $this->fields = array_merge($this->generateFields(), $this->generateAppendedFields());
         $this->setFields();
     }
-
 
     /**
      * @return array
@@ -101,7 +98,6 @@ abstract class Serializer extends Field {
         return $this->fields;
     }
 
-
     /**
      * @return ListSerializer
      */
@@ -110,19 +106,16 @@ abstract class Serializer extends Field {
         return ListSerializer::generate()->child($this);
     }
 
-
     /**
      *
      */
     protected function setFields()
     {
         /* @var $field Field */
-        foreach ($this->fields as $fieldName => $field)
-        {
+        foreach ($this->fields as $fieldName => $field) {
             $field->bind($fieldName, $this);
         }
     }
-
 
     /**
      * @return \Generator
@@ -130,15 +123,12 @@ abstract class Serializer extends Field {
     public function getWritableFields()
     {
         /* @var $field Field */
-        foreach ($this->fields as $field)
-        {
-            if ( ! $field->readOnly or ! EmptyType::isEmpty($field->default()) )
-            {
+        foreach ($this->fields as $field) {
+            if (! $field->readOnly or ! EmptyType::isEmpty($field->default())) {
                 yield $field;
             }
         }
     }
-
 
     /**
      * @return \Generator
@@ -146,15 +136,12 @@ abstract class Serializer extends Field {
     public function getReadableFields()
     {
         /* @var $field Field */
-        foreach ($this->fields as $field)
-        {
-            if ( $field->writeOnly == false )
-            {
+        foreach ($this->fields as $field) {
+            if ($field->writeOnly == false) {
                 yield $field;
             }
         }
     }
-
 
     /**
      * @param $data
@@ -165,10 +152,9 @@ abstract class Serializer extends Field {
      */
     public function runValidation($data)
     {
-        list( $isEmpty, $data ) = $this->validateEmptyValues($data);
+        list($isEmpty, $data) = $this->validateEmptyValues($data);
 
-        if ( $isEmpty )
-        {
+        if ($isEmpty) {
             return $data;
         }
 
@@ -180,23 +166,20 @@ abstract class Serializer extends Field {
         return $value;
     }
 
-
     /**
      * @return array
      */
     public function getChildFieldValidationClauses()
     {
-        $validationClauses = [ ];
+        $validationClauses = [];
 
         /* @var $field Field */
-        foreach ($this->fields as $field)
-        {
+        foreach ($this->fields as $field) {
             $validationClauses[$field->source()] = $field->getValidationClause();
         }
 
         return $validationClauses;
     }
-
 
     /**
      * @param $data
@@ -207,12 +190,10 @@ abstract class Serializer extends Field {
     {
         $validator = Validator::make($data, $this->getChildFieldValidationClauses());
 
-        if ( $validator->fails() )
-        {
+        if ($validator->fails()) {
             throw new ValidationError($validator->errors()->all());
         }
     }
-
 
     /**
      * @param $data
@@ -222,50 +203,40 @@ abstract class Serializer extends Field {
      */
     public function toInternalValue($data)
     {
-        if ( ! is_array($data) )
-        {
-            $this->fail("invalid");
+        if (! is_array($data)) {
+            $this->fail('invalid');
         }
 
-        $internalValue = [ ];
-        $errors        = [ ];
+        $internalValue = [];
+        $errors = [];
 
         /* @var $field Field */
-        foreach ($this->getWritableFields() as $field)
-        {
+        foreach ($this->getWritableFields() as $field) {
             $validatedValue = null;
             $primitiveValue = $field->getValue($data);
 
-            try
-            {
-                $validatedValue       = $field->runValidation($primitiveValue);
+            try {
+                $validatedValue = $field->runValidation($primitiveValue);
                 $validationMethodName = $this->getValidationMethodName($field->getFieldName());
 
-                if ( method_exists($this, $validationMethodName) )
-                {
-                    $validatedValue = call_user_func([ $this, $validationMethodName ], $validatedValue);
+                if (method_exists($this, $validationMethodName)) {
+                    $validatedValue = call_user_func([$this, $validationMethodName], $validatedValue);
                 }
-            }
-            catch (ValidationError $e)
-            {
+            } catch (ValidationError $e) {
                 $errors[$field->getFieldName()] = $e->getErrors();
-            }
-            catch (SkipField $e)
-            {
+            } catch (SkipField $e) {
                 continue;
             }
 
             $this->setValue($internalValue, $field->sourceAttr(), $validatedValue);
         }
 
-        if ( $errors )
-        {
+        if ($errors) {
             throw new ValidationError($errors);
         }
 
         return $internalValue;
     }
-
 
     /**
      * @param $data
@@ -276,17 +247,14 @@ abstract class Serializer extends Field {
      */
     protected function setValue(&$data, $keys, $value)
     {
-        if ( $keys == [ ] )
-        {
+        if ($keys == []) {
             return $data = array_merge($data, $value);
         }
 
         $last = array_pop($keys);
-        foreach ($keys as $key)
-        {
-            if ( ! array_key_exists($key, $data) )
-            {
-                $data[$key] = [ ];
+        foreach ($keys as $key) {
+            if (! array_key_exists($key, $data)) {
+                $data[$key] = [];
             }
 
             $data = &$data[$key];
@@ -294,7 +262,6 @@ abstract class Serializer extends Field {
 
         $data[$last] = $value;
     }
-
 
     /**
      * @param $instance
@@ -304,34 +271,26 @@ abstract class Serializer extends Field {
      */
     public function toRepresentation($instance)
     {
-        $response = [ ];
+        $response = [];
 
         /* @var $field Field */
-        foreach ($this->getReadableFields() as $field)
-        {
+        foreach ($this->getReadableFields() as $field) {
             $attribute = null;
 
-            try
-            {
+            try {
                 $attribute = $field->getAttribute($instance);
-            }
-            catch (SkipField $e)
-            {
+            } catch (SkipField $e) {
             }
 
-            if ( $attribute === null )
-            {
+            if ($attribute === null) {
                 $response[$field->getFieldName()] = null;
-            }
-            else
-            {
+            } else {
                 $response[$field->fieldName] = $field->toRepresentation($attribute);
             }
         }
 
         return $response;
     }
-
 
     /**
      * @param $fieldName
@@ -340,14 +299,12 @@ abstract class Serializer extends Field {
      */
     protected function getValidationMethodName($fieldName)
     {
-        $fieldName = preg_replace_callback('/\_([a-z])/', function ($matches)
-        {
+        $fieldName = preg_replace_callback('/\_([a-z])/', function ($matches) {
             return strtoupper($matches[1]);
         }, $fieldName);
 
-        return "validate" . ucfirst($fieldName);
+        return 'validate'.ucfirst($fieldName);
     }
-
 
     /**
      * @param $attributes
@@ -359,7 +316,6 @@ abstract class Serializer extends Field {
         return $attributes;
     }
 
-
     /**
      * @param bool $raiseException
      *
@@ -368,96 +324,70 @@ abstract class Serializer extends Field {
      */
     public function isValid($raiseException = false)
     {
-        try
-        {
+        try {
             $this->validatedData = $this->runValidation($this->initialData);
-        }
-        catch (ValidationError $e)
-        {
-            $this->validatedData = [ ];
-            $this->errors        = $e->getErrors();
+        } catch (ValidationError $e) {
+            $this->validatedData = [];
+            $this->errors = $e->getErrors();
         }
 
-        if ( $this->errors !== [ ] and $raiseException )
-        {
+        if ($this->errors !== [] and $raiseException) {
             throw new ValidationError($this->errors);
         }
 
         return ! $this->hasError();
     }
 
-
     /**
      * @return bool
      */
     public function hasError()
     {
-        return $this->errors !== [ ];
+        return $this->errors !== [];
     }
 
-
-    /**
-     * @param array|null $initialData
-     *
-     * @return $this|array|null
-     * @throws AssertionError
-     */
-    public function data(array $initialData = null)
+    protected function setDataAttribute(array $initialData)
     {
-        if ( $initialData !== null )
-        {
-            $this->initialData = $initialData;
+        $this->initialData = $initialData;
 
-            return $this;
-        }
-
-        if ( $this->initialData and ! $this->validatedData === null )
-        {
-            throw new AssertionError("Call .isValid() before calling data.");
-        }
-
-        if ( $this->_data === null )
-        {
-
-            if ( $this->instance and ! $this->hasError() )
-            {
-                $this->_data = $this->toRepresentation($this->instance);
-            }
-            elseif ( $this->validatedData and ! $this->hasError() )
-            {
-                $this->_data = $this->toRepresentation($this->validatedData);
-            }
-            else
-            {
-                $this->_data = $this->initialData;
-            }
-        }
-
-        return $this->_data;
+        return $this;
     }
+    protected function getDataAttribute()
+    {
+        if ($this->initialData and ! $this->validatedData === null) {
+            throw new AssertionError('Call .isValid() before calling data.');
+        }
 
+        if ($this->data === null) {
+            if ($this->instance and ! $this->hasError()) {
+                $this->data = $this->toRepresentation($this->instance);
+            } elseif ($this->validatedData and ! $this->hasError()) {
+                $this->data = $this->toRepresentation($this->validatedData);
+            } else {
+                $this->data = $this->initialData;
+            }
+        }
+
+        return $this->data;
+    }
 
     /**
      * @param array $data
      *
      * @return mixed|null
      */
-    public function save(array $data = [ ])
+    public function save(array $data = [])
     {
         $validatedData = array_merge($this->validatedData, $data);
 
-        if ( $this->instance )
-        {
+        if ($this->instance) {
             $this->instance = $this->update($this->instance, $validatedData);
-        }
-        else
-        {
+        } else {
             $this->instance = $this->create($validatedData);
         }
 
         return $this->instance;
     }
-
 
     /**
      * @return mixed
@@ -467,24 +397,19 @@ abstract class Serializer extends Field {
         return $this->validatedData;
     }
 
-
     /**
-     * Get custom validation rules from field.
      * @return array
      */
     protected function generateAppendedFields()
     {
-        $fields = [ ];
+        $fields = [];
 
-        foreach (get_class_methods(get_called_class()) as $method)
-        {
-            if ( preg_match("/^generate[A-Za-z0-9]+Field$/", $method) )
-            {
-                $fields = array_merge($fields, call_user_func([ $this, $method ]));
+        foreach (get_class_methods(get_called_class()) as $method) {
+            if (preg_match('/^generate[A-Za-z0-9]+Field$/', $method)) {
+                $fields = array_merge($fields, call_user_func([$this, $method]));
             }
         }
 
         return $fields;
     }
-
 }

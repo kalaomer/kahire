@@ -1,16 +1,17 @@
-<?php namespace Kahire\ViewSets\Mixins;
+<?php
+
+namespace Kahire\ViewSets\Mixins;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Kahire\Serializers\Serializer;
 
-trait StoreModelMixin {
-
+trait StoreModelMixin
+{
     /**
      * @return Serializer
      */
     abstract public function getSerializer();
-
 
     /**
      * @param Request $request
@@ -29,7 +30,6 @@ trait StoreModelMixin {
 
         return new JsonResponse($serializer->data(), JsonResponse::HTTP_CREATED);
     }
-
 
     /**
      * @param Serializer $serializer

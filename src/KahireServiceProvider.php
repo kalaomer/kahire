@@ -1,13 +1,14 @@
-<?php namespace Kahire;
+<?php
+
+namespace Kahire;
 
 use Illuminate\Support\ServiceProvider;
 
 /**
- * Class KahireServiceProvider
- * @package Kahire
+ * Class KahireServiceProvider.
  */
-class KahireServiceProvider extends ServiceProvider {
-
+class KahireServiceProvider extends ServiceProvider
+{
     /**
      * @return bool
      */
@@ -15,7 +16,6 @@ class KahireServiceProvider extends ServiceProvider {
     {
         return false;
     }
-
 
     /**
      *
@@ -25,5 +25,4 @@ class KahireServiceProvider extends ServiceProvider {
         $kernel = $this->app->make('Illuminate\Contracts\Http\Kernel');
         $kernel->pushMiddleware('Kahire\Middleware\ValidationMiddleware');
     }
-
 }

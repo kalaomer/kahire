@@ -1,4 +1,6 @@
-<?php namespace Kahire\Serializers\Fields;
+<?php
+
+namespace Kahire\Serializers\Fields;
 
 use Carbon\Carbon;
 use DateTime;
@@ -8,17 +10,16 @@ use Kahire\Serializers\Fields\Attributes\BeforeAttribute;
 use Kahire\Serializers\Fields\Exceptions\ValidationError;
 
 /**
- * Class DateTimeField
- * @package Kahire\Serializers\Fields
+ * Class DateTimeField.
  */
-class DateTimeField extends Field {
-
+class DateTimeField extends Field
+{
     use AfterAttribute, BeforeAttribute;
 
     /**
      * @var array
      */
-    protected $validationRules = [ "date" ];
+    protected $validationRules = ['date'];
 
     /**
      * @var array
@@ -41,8 +42,7 @@ class DateTimeField extends Field {
     /**
      * @var string
      */
-    protected $outputFormat = "Y-m-d H:i:s";
-
+    protected $outputFormat = 'Y-m-d H:i:s';
 
     /**
      * @param $dateString string
@@ -51,20 +51,15 @@ class DateTimeField extends Field {
      */
     protected function createDateTimeFromString($dateString)
     {
-        foreach ($this->inputFormats as $inputFormat)
-        {
-            try
-            {
+        foreach ($this->inputFormats as $inputFormat) {
+            try {
                 return Carbon::createFromFormat($inputFormat, $dateString);
-            }
-            catch (InvalidArgumentException $e)
-            {
+            } catch (InvalidArgumentException $e) {
             }
         }
 
         return false;
     }
-
 
     /**
      * @param $value
@@ -74,21 +69,18 @@ class DateTimeField extends Field {
      */
     public function toInternalValue($value)
     {
-        if ( $value instanceof DateTime )
-        {
+        if ($value instanceof DateTime) {
             return $value;
         }
 
         $date = $this->createDateTimeFromString($value);
 
-        if ( $date === false )
-        {
-            throw new ValidationError("value is not matched with datetime formats.");
+        if ($date === false) {
+            throw new ValidationError('value is not matched with datetime formats.');
         }
 
         return $date;
     }
-
 
     /**
      * @param $value
@@ -97,21 +89,18 @@ class DateTimeField extends Field {
      */
     public function toRepresentation($value)
     {
-        if ( $value instanceof DateTime )
-        {
+        if ($value instanceof DateTime) {
             return $value->format($this->outputFormat);
         }
 
         $date = $this->createDateTimeFromString($value);
 
-        if ( $date === false )
-        {
-            return null;
+        if ($date === false) {
+            return;
         }
 
         return $date->format($this->outputFormat);
     }
-
 
     /**
      * @param $data DateTime
@@ -125,13 +114,11 @@ class DateTimeField extends Field {
         return parent::runValidationClause($data);
     }
 
-
     /**
      * @return array
      */
     protected function getDateFormatValidationRule()
     {
-        return [ "date_format" => $this->outputFormat ];
+        return ['date_format' => $this->outputFormat];
     }
-
 }

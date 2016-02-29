@@ -1,11 +1,12 @@
-<?php namespace Kahire\Serializers\Fields;
+<?php
+
+namespace Kahire\Serializers\Fields;
 
 /**
- * Class PrimaryKeyField
- * @package Kahire\Serializers\Fields
+ * Class PrimaryKeyField.
  */
-class PrimaryKeyField extends IntegerField {
-
+class PrimaryKeyField extends IntegerField
+{
     /**
      * PrimaryKeyField constructor.
      */

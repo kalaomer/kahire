@@ -1,57 +1,49 @@
-<?php namespace Kahire\Serializers\Fields\Attributes;
+<?php
+
+namespace Kahire\Serializers\Fields\Attributes;
 
 use DateTime;
 
 /**
- * Class BeforeAttribute
- * @package Kahire\Serializers\Fields\Attributes
+ * Class BeforeAttribute.
+ * @method $this before(string $value)
  */
-trait BeforeAttribute {
-
+trait BeforeAttribute
+{
     /**
-     * @var string
+     * @var string|DateTime
      */
     protected $before;
 
-
-    /**
-     * @param $value
-     *
-     * @return $this|string
-     */
-    public function before($value)
+    protected function getBeforeAttribute()
     {
-        if ( $value !== null )
-        {
-            if ( ! is_string($value) and ! $value instanceof DateTime )
-            {
-                throw new \InvalidArgumentException("before value must be string or datetime.");
-            }
-
-            $this->before = $value;
-
-            return $this;
-        }
-
         return $this->before;
     }
 
+    protected function setBeforeAttribute($value)
+    {
+        if (! is_string($value) and ! $value instanceof DateTime) {
+            throw new \InvalidArgumentException('before value must be string or datetime.');
+        }
+
+        $this->before = $value;
+
+        return $this;
+    }
 
     /**
      * @return array
      */
     public function getBeforeValidationRule()
     {
-        if ( $this->before !== null )
-        {
-            if ( $this->before instanceof DateTime )
-            {
-                return [ "before" => $this->before->format($this->outputFormat) ];
+        if ($this->before !== null) {
+            if ($this->before instanceof DateTime) {
+                return ['before' => $this->before->format($this->outputFormat)];
             }
 
-            return [ "before" => $this->before ];
+            return ['before' => $this->before];
         }
 
-        return [ ];
+        return [];
     }
 }

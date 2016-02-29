@@ -1,11 +1,12 @@
-<?php namespace Kahire\Serializers\Fields;
+<?php
+
+namespace Kahire\Serializers\Fields;
 
 /**
- * Class EmailField
- * @package Kahire\Serializers\Fields
+ * Class EmailField.
  */
-class EmailField extends StringField {
-
+class EmailField extends StringField
+{
     /**
      * EmailField constructor.
      */
@@ -13,6 +14,6 @@ class EmailField extends StringField {
     {
         parent::__construct();
 
-        $this->addValidationRules([ "email" ]);
+        $this->addValidationRules(['email']);
     }
 }

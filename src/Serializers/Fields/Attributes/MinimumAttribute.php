@@ -1,50 +1,43 @@
-<?php namespace Kahire\Serializers\Fields\Attributes;
+<?php
+
+namespace Kahire\Serializers\Fields\Attributes;
 
 /**
- * Class MinimumAttribute
- * @package Kahire\Serializers\Fields\Attributes
+ * Class MinimumAttribute.
+ * @method $this min(int $value)
  */
-trait MinimumAttribute {
-
+trait MinimumAttribute
+{
     /**
      * @var null
      */
     protected $min = null;
 
-
-    /**
-     * @param integer $value
-     *
-     * @return $this
-     */
-    public function min($value = null)
+    protected function getMinAttribute()
     {
-        if ( $value !== null )
-        {
-            if ( ! is_integer($value) )
-            {
-                throw new \InvalidArgumentException("value must be integer.");
-            }
-
-            $this->min = $value;
-
-            return $this;
-        }
-
         return $this->min;
     }
 
+    protected function setMinAttribute($value)
+    {
+        if (! is_integer($value)) {
+            throw new \InvalidArgumentException('value must be integer.');
+        }
+
+        $this->min = $value;
+
+        return $this;
+    }
 
     /**
      * @return array
      */
     public function getMinimumValidationRule()
     {
-        if ( $this->min !== null )
-        {
-            return [ "min" => $this->min ];
+        if ($this->min !== null) {
+            return ['min' => $this->min];
         }
 
-        return [ ];
+        return [];
     }
 }

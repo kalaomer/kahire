@@ -1,9 +1,11 @@
-<?php namespace Kahire\Tests\Serializers\Fields;
+<?php
+
+namespace Kahire\Tests\Serializers\Fields;
 
 use Kahire\Serializers\Fields\EmailField;
 
-class EmailFieldTest extends FieldTestCase {
-
+class EmailFieldTest extends FieldTestCase
+{
     public $fieldClass = EmailField::class;
 
     /**
@@ -12,15 +14,15 @@ class EmailFieldTest extends FieldTestCase {
     public $field;
 
     public $validInputs = [
-        [ "foo@bar.com", "foo@bar.com" ]
+        ['foo@bar.com', 'foo@bar.com'],
     ];
 
     public $invalidInputs = [
-        "foo",
-        "hey!"
+        'foo',
+        'hey!',
     ];
 
     public $outputs = [
-        [ "foo@bar.com", "foo@bar.com" ]
+        ['foo@bar.com', 'foo@bar.com'],
     ];
 }

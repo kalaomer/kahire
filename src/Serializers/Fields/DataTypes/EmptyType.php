@@ -1,40 +1,36 @@
-<?php namespace Kahire\Serializers\Fields\DataTypes;
+<?php
+
+namespace Kahire\Serializers\Fields\DataTypes;
 
 /**
- * Class EmptyType
+ * Class EmptyType.
  *
  * This class is used to represent no data being provided for a given input
  * or output value.
  *
  * It is required because `Null` may be a valid input or output value.
- *
- * @package Kahire\Serializers\Fields\DataTypes
  */
 /**
- * Class EmptyType
- * @package Kahire\Serializers\Fields\DataTypes
+ * Class EmptyType.
  */
-class EmptyType {
-
+class EmptyType
+{
     /**
      * @var EmptyType
      */
     public static $instance = null;
-
 
     /**
      * @return EmptyType
      */
     public static function get()
     {
-        if ( self::$instance === null )
-        {
+        if (self::$instance === null) {
             self::$instance = new self();
         }
 
         return self::$instance;
     }
-
 
     /**
      * @param $value

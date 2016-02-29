@@ -1,20 +1,20 @@
-<?php namespace Kahire\Serializers\Fields;
+<?php
+
+namespace Kahire\Serializers\Fields;
 
 /**
- * Class BooleanField
- * @package Kahire\Serializers\Fields
+ * Class BooleanField.
  */
-class BooleanField extends Field {
-
+class BooleanField extends Field
+{
     /**
      *
      */
-    CONST TRUE_VALUES = [ "t", "T", "true", "True", "TRUE", "1", 1, true ];
+    const TRUE_VALUES = ['t', 'T', 'true', 'True', 'TRUE', '1', 1, true];
     /**
      *
      */
-    CONST FALSE_VALUES = [ "f", "F", "false", "False", "FALSE", "0", 0, false ];
-
+    const FALSE_VALUES = ['f', 'F', 'false', 'False', 'FALSE', '0', 0, false];
 
     /**
      * @param $value
@@ -25,25 +25,20 @@ class BooleanField extends Field {
     {
         // Can not use is_array or array_search
         // Because they always return TRUE because of `true` value which is in TRUE_VALUES.
-        foreach (self::TRUE_VALUES as $trueValue)
-        {
-            if ( $trueValue === $value )
-            {
+        foreach (self::TRUE_VALUES as $trueValue) {
+            if ($trueValue === $value) {
                 return true;
             }
         }
 
-        foreach (self::FALSE_VALUES as $falseValue)
-        {
-            if ( $falseValue === $value )
-            {
+        foreach (self::FALSE_VALUES as $falseValue) {
+            if ($falseValue === $value) {
                 return false;
             }
         }
 
         return (bool) $value;
     }
-
 
     /**
      * @param $value
@@ -53,23 +48,18 @@ class BooleanField extends Field {
      */
     public function toInternalValue($value)
     {
-        foreach (self::TRUE_VALUES as $trueValue)
-        {
-            if ( $trueValue === $value )
-            {
+        foreach (self::TRUE_VALUES as $trueValue) {
+            if ($trueValue === $value) {
                 return true;
             }
         }
 
-        foreach (self::FALSE_VALUES as $falseValue)
-        {
-            if ( $falseValue === $value )
-            {
+        foreach (self::FALSE_VALUES as $falseValue) {
+            if ($falseValue === $value) {
                 return false;
             }
         }
 
-        $this->fail("invalid");
+        $this->fail('invalid');
     }
-
 }

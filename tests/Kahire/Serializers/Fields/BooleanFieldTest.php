@@ -1,9 +1,11 @@
-<?php namespace Kahire\Tests\Serializers\Fields;
+<?php
+
+namespace Kahire\Tests\Serializers\Fields;
 
 use Kahire\Serializers\Fields\BooleanField;
 
-class BooleanFieldTest extends FieldTestCase {
-
+class BooleanFieldTest extends FieldTestCase
+{
     public $fieldClass = BooleanField::class;
 
     /**
@@ -12,33 +14,33 @@ class BooleanFieldTest extends FieldTestCase {
     public $field;
 
     public $validInputs = [
-        [ "t", true ],
-        [ "T", true ],
-        [ "true", true ],
-        [ "True", true ],
-        [ "TRUE", true ],
-        [ "1", true ],
-        [ 1, true ],
-        [ true, true ],
+        ['t', true],
+        ['T', true],
+        ['true', true],
+        ['True', true],
+        ['TRUE', true],
+        ['1', true],
+        [1, true],
+        [true, true],
 
-        [ "f", false ],
-        [ "F", false ],
-        [ "false", false ],
-        [ "False", false ],
-        [ "FALSE", false ],
-        [ "0", false ],
-        [ 0, false ],
-        [ false, false ]
+        ['f', false],
+        ['F', false],
+        ['false', false],
+        ['False', false],
+        ['FALSE', false],
+        ['0', false],
+        [0, false],
+        [false, false],
     ];
 
     public $invalidInputs = [
-        "foo",
-        "hey!",
+        'foo',
+        'hey!',
         2,
-        3.3
+        3.3,
     ];
 
     public $outputs = [
-        [ "1", true ]
+        ['1', true],
     ];
 }

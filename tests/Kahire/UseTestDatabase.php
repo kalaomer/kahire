@@ -1,10 +1,12 @@
-<?php namespace Kahire\Tests;
+<?php
+
+namespace Kahire\Tests;
 
 use Illuminate\Filesystem\ClassFinder;
 use Illuminate\Filesystem\Filesystem;
 
-trait UseTestDatabase {
-
+trait UseTestDatabase
+{
     /**
      * @before
      */
@@ -16,14 +18,12 @@ trait UseTestDatabase {
         $this->triggerMigrationFiles();
     }
 
-
     public function triggerMigrationFiles()
     {
-        $fileSystem  = new Filesystem;
+        $fileSystem = new Filesystem;
         $classFinder = new ClassFinder;
 
-        foreach ($fileSystem->files(TEST_DIR . "/database/migrations") as $file)
-        {
+        foreach ($fileSystem->files(TEST_DIR.'/database/migrations') as $file) {
             $fileSystem->requireOnce($file);
             $migrationClass = $classFinder->findClass($file);
 

@@ -1,4 +1,6 @@
-<?php namespace Kahire\Serializers;
+<?php
+
+namespace Kahire\Serializers;
 
 use Illuminate\Database\Eloquent\Model;
 use Kahire\Serializers\Fields\DateTimeField;
@@ -6,92 +8,81 @@ use Kahire\Serializers\Fields\Field;
 use Kahire\Serializers\Fields\PrimaryKeyField;
 
 /**
- * Class ModelSerializer
- * @package Kahire\Serializers
+ * Class ModelSerializer.
  */
-abstract class ModelSerializer extends Serializer {
-
+abstract class ModelSerializer extends Serializer
+{
     /**
      * @var string
      */
     protected $model;
 
     /**
-     * For auto append PrimaryKey field
+     * For auto append PrimaryKey field.
      * @var bool
      */
     protected $usePrimaryKey = true;
 
     /**
-     * PrimaryKey field key
+     * PrimaryKey field key.
      * @var string
      */
-    protected $primaryKey = "id";
+    protected $primaryKey = 'id';
 
     /**
-     * For auto append created_at and updated_at fields
+     * For auto append created_at and updated_at fields.
      * @var bool
      */
     protected $useTimeStamps = true;
-
 
     /**
      * @return array
      */
     public function getOneToOneRelations()
     {
-        $fields = [ ];
+        $fields = [];
 
         /* @var $field Field */
-        foreach ($this->fields as $field)
-        {
-            if ( $field instanceof ModelSerializer )
-            {
+        foreach ($this->fields as $field) {
+            if ($field instanceof self) {
                 $fields[] = $field;
             }
         }
 
         return $fields;
     }
-
 
     /**
      * @return array
      */
     public function getOneToManyRelations()
     {
-        $fields = [ ];
+        $fields = [];
 
-        foreach ($this->fields as $field)
-        {
-            if ( $field instanceof ListSerializer && $field->child() instanceof ModelSerializer )
-            {
+        foreach ($this->fields as $field) {
+            if ($field instanceof ListSerializer && $field->child() instanceof self) {
                 $fields[] = $field;
             }
         }
 
         return $fields;
     }
-
 
     /**
      * @return array
      */
     public function getBaseFields()
     {
-        $fields = [ ];
+        $fields = [];
 
-        foreach ($this->fields as $field)
-        {
-            if ( ! $field instanceof Serializer )
-            {
+        foreach ($this->fields as $field) {
+            if (! $field instanceof Serializer) {
                 $fields[] = $field;
             }
         }
 
         return $fields;
     }
-
 
     /**
      * @param $validData
@@ -111,7 +102,6 @@ abstract class ModelSerializer extends Serializer {
         return $instance;
     }
 
-
     /**
      * @param       $validatedData
      * @param Model $instance
@@ -122,20 +112,17 @@ abstract class ModelSerializer extends Serializer {
     public function createOneToOneRelations($validatedData, Model $instance)
     {
         /* @var $oneToOneRelation ModelSerializer */
-        foreach ($this->getOneToOneRelations() as $oneToOneRelation)
-        {
-            if ( array_key_exists($oneToOneRelation->getFieldName(), $validatedData) )
-            {
+        foreach ($this->getOneToOneRelations() as $oneToOneRelation) {
+            if (array_key_exists($oneToOneRelation->getFieldName(), $validatedData)) {
                 $value = $validatedData[$oneToOneRelation->getFieldName()];
                 $oneToOneRelation->data($value)->isValid();
 
                 $oneToOneInstance = $oneToOneRelation->save();
 
-                call_user_func([ $instance, $oneToOneRelation->getFieldName() ])->associate($oneToOneInstance);
+                call_user_func([$instance, $oneToOneRelation->getFieldName()])->associate($oneToOneInstance);
             }
         }
     }
-
 
     /**
      * @param       $validatedData
@@ -144,22 +131,18 @@ abstract class ModelSerializer extends Serializer {
     public function createOneToManyRelations($validatedData, Model $instance)
     {
         /* @var $oneToManyRelation ListSerializer */
-        foreach ($this->getOneToManyRelations() as $oneToManyRelation)
-        {
-            if ( array_key_exists($oneToManyRelation->getFieldName(), $validatedData) )
-            {
-                $value    = $validatedData[$oneToManyRelation->getFieldName()];
+        foreach ($this->getOneToManyRelations() as $oneToManyRelation) {
+            if (array_key_exists($oneToManyRelation->getFieldName(), $validatedData)) {
+                $value = $validatedData[$oneToManyRelation->getFieldName()];
                 $children = $oneToManyRelation->create($value);
 
                 /* @var $child ModelSerializer */
-                foreach ($children as $child)
-                {
-                    call_user_func([ $instance, $oneToManyRelation->getFieldName() ])->save($child);
+                foreach ($children as $child) {
+                    call_user_func([$instance, $oneToManyRelation->getFieldName()])->save($child);
                 };
             }
         }
     }
-
 
     /**
      * @param $validatedData
@@ -172,18 +155,15 @@ abstract class ModelSerializer extends Serializer {
         $instance = new $this->model;
 
         /* @var $baseField Field */
-        foreach ($this->getBaseFields() as $baseField)
-        {
-            if ( array_key_exists($baseField->getFieldName(), $validatedData) )
-            {
-                $value                                  = $validatedData[$baseField->getFieldName()];
+        foreach ($this->getBaseFields() as $baseField) {
+            if (array_key_exists($baseField->getFieldName(), $validatedData)) {
+                $value = $validatedData[$baseField->getFieldName()];
                 $instance->{$baseField->getFieldName()} = $value;
             }
         }
 
         return $instance;
     }
-
 
     /**
      * @param $instance Model
@@ -193,13 +173,11 @@ abstract class ModelSerializer extends Serializer {
      */
     public function update($instance, $validatedData)
     {
-        if ( count($this->getOneToOneRelations()) || count($this->getOneToManyRelations()) )
-        {
+        if (count($this->getOneToOneRelations()) || count($this->getOneToManyRelations())) {
             throw new \BadMethodCallException("This method does not support relation fields. You need to rewrite 'update()' method.");
         }
 
-        foreach ($validatedData as $key => $value)
-        {
+        foreach ($validatedData as $key => $value) {
             $instance->$key = $value;
         }
 
@@ -208,37 +186,32 @@ abstract class ModelSerializer extends Serializer {
         return $instance;
     }
 
-
     /**
      * @return array
      */
     protected function generatePrimaryKeyField()
     {
-        if ( $this->usePrimaryKey )
-        {
+        if ($this->usePrimaryKey) {
             return [
-                $this->primaryKey => PrimaryKeyField::generate()
+                $this->primaryKey => PrimaryKeyField::generate(),
             ];
         }
 
-        return [ ];
+        return [];
     }
-
 
     /**
      * @return array
      */
     protected function generateTimeStampField()
     {
-        if ( $this->useTimeStamps )
-        {
+        if ($this->useTimeStamps) {
             return [
-                "created_at" => DateTimeField::generate()->required(false)->readOnly(true),
-                "updated_at" => DateTimeField::generate()->required(false)->readOnly(true)
+                'created_at' => DateTimeField::generate()->required(false)->readOnly(true),
+                'updated_at' => DateTimeField::generate()->required(false)->readOnly(true),
             ];
         }
 
-        return [ ];
+        return [];
     }
-
 }

@@ -1,8 +1,10 @@
-<?php namespace TestSubject;
+<?php
+
+namespace TestSubject;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Basic extends Model {
-
-    protected $table = "basic";
+class Basic extends Model
+{
+    protected $table = 'basic';
 }

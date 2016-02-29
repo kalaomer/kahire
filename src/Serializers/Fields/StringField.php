@@ -1,21 +1,21 @@
-<?php namespace Kahire\Serializers\Fields;
+<?php
+
+namespace Kahire\Serializers\Fields;
 
 use Kahire\Serializers\Fields\Attributes\MaximumAttribute;
 use Kahire\Serializers\Fields\Attributes\MinimumAttribute;
 
 /**
- * Class StringField
- * @package Kahire\Serializers\Fields
+ * Class StringField.
  */
-class StringField extends Field {
-
+class StringField extends Field
+{
     use MinimumAttribute, MaximumAttribute;
 
     /**
      * @var array
      */
-    protected $validationRules = [ "string" ];
-
+    protected $validationRules = ['string'];
 
     /**
      * @param $value
@@ -27,7 +27,6 @@ class StringField extends Field {
         return (string) $value;
     }
 
-
     /**
      * @param $value
      *
@@ -37,5 +36,4 @@ class StringField extends Field {
     {
         return (string) $value;
     }
-
 }

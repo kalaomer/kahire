@@ -1,5 +1,8 @@
-<?php namespace Kahire\Serializers\Fields;
+<?php
 
+namespace Kahire\Serializers\Fields;
+
+use Exception;
 use Illuminate\Support\Facades\Validator;
 use Kahire\Serializers\Fields\Attributes\ReadWriteOnlyAttribute;
 use Kahire\Serializers\Fields\Attributes\RequiredAttribute;
@@ -11,8 +14,7 @@ use Kahire\Serializers\Serializer;
 use ReflectionClass;
 
 /**
- * Class Field
- * @package Kahire\Serializers\Fields
+ * Class Field.
  * @method $this allowNull()
  * @method $this allowBlank()
  * @method $this source()
@@ -20,10 +22,9 @@ use ReflectionClass;
  * @method $this default()
  * @method $this validators()
  */
-abstract class Field {
-
+abstract class Field
+{
     use RequiredAttribute, ReadWriteOnlyAttribute;
-
 
     /**
      * @param $value
@@ -32,14 +33,12 @@ abstract class Field {
      */
     abstract public function toRepresentation($value);
 
-
     /**
      * @param $value
      *
      * @return mixed
      */
     abstract public function toInternalValue($value);
-
 
     /**
      * @var bool
@@ -59,7 +58,7 @@ abstract class Field {
     /**
      * @var array
      */
-    protected $sourceAttr = [ ];
+    protected $sourceAttr = [];
 
     /**
      * @var EmptyType|null
@@ -69,29 +68,29 @@ abstract class Field {
     /**
      * @var array
      */
-    protected $validators = [ ];
+    protected $validators = [];
 
     /**
      * @var array
      */
-    protected $validationRules = [ ];
+    protected $validationRules = [];
 
     /**
      * @var array
      */
     protected $baseAttributes = [
-        "allowNull",
-        "allowBlank",
-        "source",
-        "sourceAttr",
-        "default",
-        "validators"
+        'allowNull',
+        'allowBlank',
+        'source',
+        'sourceAttr',
+        'default',
+        'validators',
     ];
 
     /**
      * @var array
      */
-    protected $attributes = [ ];
+    protected $attributes = [];
 
     /**
      * @var string
@@ -102,8 +101,8 @@ abstract class Field {
      * @var array
      */
     protected $errorMessages = [
-        "required" => "This field is required",
-        "invalid"  => "This is not a valid value."
+        'required' => 'This field is required',
+        'invalid'  => 'This is not a valid value.',
     ];
 
     /**
@@ -116,7 +115,6 @@ abstract class Field {
      */
     protected $root;
 
-
     /**
      * @return static
      */
@@ -127,7 +125,6 @@ abstract class Field {
         return $reflection->newInstanceArgs(func_get_args());
     }
 
-
     /**
      * Field constructor.
      */
@@ -137,20 +134,17 @@ abstract class Field {
         $this->default = EmptyType::get();
     }
 
-
     /**
      * @param $name
      * @param $arguments
      *
      * @return $this
-     * @throws \Exception
+     * @throws Exception
      */
     public function __call($name, $arguments)
     {
-        if ( in_array($name, $this->attributes) )
-        {
-            if ( isset( $arguments[0] ) )
-            {
+        if (in_array($name, $this->attributes)) {
+            if (isset($arguments[0])) {
                 $this->$name = $arguments[0];
 
                 return $this;
@@ -159,9 +153,36 @@ abstract class Field {
             return $this->$name;
         }
 
-        throw new \Exception();
+        return $this->callAttributeDecorator($name, $arguments);
     }
 
+    /**
+     * Trigger for getter and setter methods.
+     *
+     * @param       $name
+     * @param array $arguments
+     *
+     * @return mixed
+     * @throws Exception
+     */
+    protected function callAttributeDecorator($name, array $arguments)
+    {
+        if (count($arguments) === 0) {
+            $getterAttributeName = 'get'.ucfirst($name).'Attribute';
+
+            if (method_exists($this, $getterAttributeName)) {
+                return call_user_func_array([$this, $getterAttributeName], $arguments);
+            }
+        } else {
+            $setterAttributeName = 'set'.ucfirst($name).'Attribute';
+
+            if (method_exists($this, $setterAttributeName)) {
+                return call_user_func_array([$this, $setterAttributeName], $arguments);
+            }
+        }
+
+        throw new Exception('Attribute not found');
+    }
 
     /**
      * @param array ...$attributes
@@ -175,7 +196,6 @@ abstract class Field {
         return $this;
     }
 
-
     /**
      * @param $fieldName
      * @param $parent
@@ -183,27 +203,23 @@ abstract class Field {
     public function bind($fieldName, $parent)
     {
         $this->fieldName = $fieldName;
-        $this->parent    = $parent;
+        $this->parent = $parent;
 
-        if ( ! $this->source )
-        {
+        if (! $this->source) {
             $this->source = $this->fieldName;
         }
 
         $root = $this;
-        while ($root->parent != null)
-        {
+        while ($root->parent != null) {
             $root = $root->parent;
         }
 
         $this->root = $root;
 
-        if ( $this->source !== "*" )
-        {
-            $this->sourceAttr = explode(".", $this->source);
+        if ($this->source !== '*') {
+            $this->sourceAttr = explode('.', $this->source);
         }
     }
-
 
     /**
      * $instance should be an array or object which is implements ArrayAccess interface.
@@ -216,27 +232,21 @@ abstract class Field {
      */
     public function getAttribute($instance)
     {
-        try
-        {
-            foreach ($this->sourceAttr as $attr)
-            {
+        try {
+            foreach ($this->sourceAttr as $attr) {
                 $instance = $instance[$attr];
             }
 
             return $instance;
-        }
-        catch (\Exception $e)
-        {
+        } catch (Exception $e) {
             // If there is not attribute and not required then throw SkipField
-            if ( $this->required == false and EmptyType::isEmpty($this->default) )
-            {
+            if ($this->required == false and EmptyType::isEmpty($this->default)) {
                 throw new SkipField();
             }
 
             throw new AttributeError("{$this->fieldName} is not match in {$this->parent->getFieldName()}");
         }
     }
-
 
     /**
      * @param $values
@@ -245,14 +255,12 @@ abstract class Field {
      */
     public function getValue($values)
     {
-        if ( ! array_key_exists($this->fieldName, $values) )
-        {
+        if (! array_key_exists($this->fieldName, $values)) {
             return EmptyType::get();
         }
 
         return $values[$this->fieldName];
     }
-
 
     /**
      * @return EmptyType|mixed|null
@@ -260,15 +268,12 @@ abstract class Field {
      */
     public function getDefault()
     {
-        if ( EmptyType::isEmpty($this->default) )
-        {
+        if (EmptyType::isEmpty($this->default)) {
             throw new SkipField();
         }
 
-        if ( is_callable($this->default) )
-        {
-            if ( method_exists($this->default, "setContext") )
-            {
+        if (is_callable($this->default)) {
+            if (method_exists($this->default, 'setContext')) {
                 $this->default->setContext($this);
             }
 
@@ -277,7 +282,6 @@ abstract class Field {
 
         return $this->default;
     }
-
 
     /**
      * @param $data
@@ -290,39 +294,32 @@ abstract class Field {
      */
     public function validateEmptyValues($data)
     {
-        if ( $this->readOnly )
-        {
-            return [ true, $this->getDefault() ];
+        if ($this->readOnly) {
+            return [true, $this->getDefault()];
         }
 
-        if ( EmptyType::isEmpty($data) )
-        {
-            if ( $this->root instanceof Serializer and $this->root->partial() )
-            {
+        if (EmptyType::isEmpty($data)) {
+            if ($this->root instanceof Serializer and $this->root->partial()) {
                 throw new SkipField();
             }
 
-            if ( $this->required )
-            {
-                $this->fail("required");
+            if ($this->required) {
+                $this->fail('required');
             }
 
-            return [ true, $this->getDefault() ];
+            return [true, $this->getDefault()];
         }
 
-        if ( $data === null )
-        {
-            if ( ! $this->allowNull )
-            {
-                $this->fail("invalid");
+        if ($data === null) {
+            if (! $this->allowNull) {
+                $this->fail('invalid');
             }
 
-            return [ true, null ];
+            return [true, null];
         }
 
-        return [ false, $data ];
+        return [false, $data];
     }
-
 
     /**
      * @param $data
@@ -334,17 +331,15 @@ abstract class Field {
         $validationClause = $this->getValidationClause();
 
         $validator = Validator::make([
-            $this->fieldName => $data
+            $this->fieldName => $data,
         ], [
-            $this->fieldName => $validationClause
+            $this->fieldName => $validationClause,
         ]);
 
-        if ( $validator->fails() )
-        {
+        if ($validator->fails()) {
             throw new ValidationError($validator->errors()->all());
         }
     }
-
 
     /**
      * @param $data
@@ -355,10 +350,9 @@ abstract class Field {
      */
     public function runValidation($data)
     {
-        list( $isEmpty, $data ) = $this->validateEmptyValues($data);
+        list($isEmpty, $data) = $this->validateEmptyValues($data);
 
-        if ( $isEmpty )
-        {
+        if ($isEmpty) {
             return $data;
         }
 
@@ -369,7 +363,6 @@ abstract class Field {
         return $value;
     }
 
-
     /**
      * @param $value
      *
@@ -377,31 +370,24 @@ abstract class Field {
      */
     public function runValidators($value)
     {
-        $errors = [ ];
+        $errors = [];
 
-        foreach ($this->validators as $validator)
-        {
-            if ( is_object($validator) and method_exists($validator, "setContext") )
-            {
+        foreach ($this->validators as $validator) {
+            if (is_object($validator) and method_exists($validator, 'setContext')) {
                 $validator->setContext($this);
             }
 
-            try
-            {
+            try {
                 $validator($value);
-            }
-            catch (ValidationError $e)
-            {
+            } catch (ValidationError $e) {
                 $errors[] = $e->getMessage();
             }
         }
 
-        if ( $errors != [ ] )
-        {
+        if ($errors != []) {
             throw new ValidationError($errors);
         }
     }
-
 
     /**
      * @param       $key
@@ -416,7 +402,6 @@ abstract class Field {
         throw new ValidationError($message);
     }
 
-
     /**
      * @param $rules
      *
@@ -429,26 +414,22 @@ abstract class Field {
         return $this;
     }
 
-
     /**
      * Get custom validation rules from field.
      * @return array
      */
     public function getValidationRules()
     {
-        $rules = [ ];
+        $rules = [];
 
-        foreach (get_class_methods(get_called_class()) as $method)
-        {
-            if ( preg_match("/^get[A-Za-z]+ValidationRule$/", $method) )
-            {
-                $rules = array_merge($rules, call_user_func([ $this, $method ]));
+        foreach (get_class_methods(get_called_class()) as $method) {
+            if (preg_match('/^get[A-Za-z]+ValidationRule$/', $method)) {
+                $rules = array_merge($rules, call_user_func([$this, $method]));
             }
         }
 
         return $rules;
     }
-
 
     /**
      * @return string
@@ -457,35 +438,27 @@ abstract class Field {
     {
         $validationRules = array_merge($this->validationRules, $this->getValidationRules());
 
-        $ruleClauses = [ ];
+        $ruleClauses = [];
 
-        foreach ($validationRules as $ruleKey => $ruleValue)
-        {
+        foreach ($validationRules as $ruleKey => $ruleValue) {
             // If ruleKey is string, then it will validation name
-            if ( is_string($ruleKey) )
-            {
-                $ruleClause = $ruleKey . ":";
+            if (is_string($ruleKey)) {
+                $ruleClause = $ruleKey.':';
 
-                if ( is_array($ruleValue) )
-                {
-                    $ruleClause = implode(",", $ruleValue);
-                }
-                else
-                {
+                if (is_array($ruleValue)) {
+                    $ruleClause = implode(',', $ruleValue);
+                } else {
                     $ruleClause .= $ruleValue;
                 }
-            }
-            else
-            {
+            } else {
                 $ruleClause = $ruleValue;
             }
 
             $ruleClauses[] = $ruleClause;
         }
 
-        return implode("|", $ruleClauses);
+        return implode('|', $ruleClauses);
     }
-
 
     /**
      * @return string

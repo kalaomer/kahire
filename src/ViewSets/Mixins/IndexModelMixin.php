@@ -1,22 +1,22 @@
-<?php namespace Kahire\ViewSets\Mixins;
+<?php
+
+namespace Kahire\ViewSets\Mixins;
 
 use Illuminate\Database\Eloquent\Builder;
 use Kahire\Serializers\Serializer;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
-trait IndexModelMixin {
-
+trait IndexModelMixin
+{
     /**
      * @return Builder
      */
     abstract public function getQuerySet();
 
-
     /**
      * @return Serializer;
      */
     abstract public function getSerializer();
-
 
     /**
      * @return JsonResponse

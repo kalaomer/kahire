@@ -1,57 +1,49 @@
-<?php namespace Kahire\Serializers\Fields\Attributes;
+<?php
+
+namespace Kahire\Serializers\Fields\Attributes;
 
 use DateTime;
 
 /**
- * Class AfterAttribute
- * @package Kahire\Serializers\Fields\Attributes
+ * Class AfterAttribute.
+ * @method $this after(string $value)
  */
-trait AfterAttribute {
-
+trait AfterAttribute
+{
     /**
-     * @var string
+     * @var string|DateTime
      */
     protected $after;
 
-
-    /**
-     * @param null $value
-     *
-     * @return $this|string
-     */
-    public function after($value = null)
+    protected function getAfterAttribute()
     {
-        if ( $value !== null )
-        {
-            if ( ! is_string($value) and ! $value instanceof DateTime )
-            {
-                throw new \InvalidArgumentException("after value must be string or datetime.");
-            }
-
-            $this->after = $value;
-
-            return $this;
-        }
-
         return $this->after;
     }
 
+    protected function setAfterAttribute($value)
+    {
+        if (! is_string($value) and ! $value instanceof DateTime) {
+            throw new \InvalidArgumentException('after value must be string or datetime.');
+        }
+
+        $this->after = $value;
+
+        return $this;
+    }
 
     /**
      * @return array
      */
     public function getAfterValidationRule()
     {
-        if ( $this->after !== null )
-        {
-            if ( $this->after instanceof \DateTime )
-            {
-                return [ "after" => $this->after->format($this->outputFormat) ];
+        if ($this->after !== null) {
+            if ($this->after instanceof \DateTime) {
+                return ['after' => $this->after->format($this->outputFormat)];
             }
 
-            return [ "after" => $this->after ];
+            return ['after' => $this->after];
         }
 
-        return [ ];
+        return [];
     }
 }

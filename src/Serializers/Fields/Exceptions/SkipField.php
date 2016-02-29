@@ -1,9 +1,10 @@
-<?php namespace Kahire\Serializers\Fields\Exceptions;
+<?php
+
+namespace Kahire\Serializers\Fields\Exceptions;
 
 /**
- * Class SkipField
- * @package Kahire\Serializers\Fields\Exceptions
+ * Class SkipField.
  */
-class SkipField extends \Exception {
-
+class SkipField extends \Exception
+{
 }

@@ -1,19 +1,25 @@
-<?php namespace Kahire\Serializers\Fields;
+<?php
+
+namespace Kahire\Serializers\Fields;
 
 use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\URL;
+use InvalidArgumentException;
 use Kahire\Serializers\Fields\Attributes\MaximumAttribute;
 use Kahire\Serializers\Fields\Attributes\MimesAttribute;
 use Symfony\Component\HttpFoundation\File\File;
 
 /**
- * Class FileField
- * @package Kahire\Serializers\Fields
+ * Class FileField.
+ * @method $this disk(str $value)
+ * @method $this visibility(str $value)
+ * @method $this urlPrefix(str $value)
+ * @method $this subDir(str $value)
  */
-class FileField extends Field {
-
+class FileField extends Field
+{
     use MaximumAttribute, MimesAttribute;
 
     /**
@@ -29,13 +35,12 @@ class FileField extends Field {
     /**
      * @var string
      */
-    protected $urlPrefix = "/";
+    protected $urlPrefix = '/';
 
     /**
      * @var string
      */
     protected $visibility = null;
-
 
     /**
      * FileField constructor.
@@ -44,9 +49,8 @@ class FileField extends Field {
     {
         parent::__construct();
 
-        $this->disk = Config::get("filesystems.default");
+        $this->disk = Config::get('filesystems.default');
     }
-
 
     /**
      * After Validation save file.
@@ -63,7 +67,6 @@ class FileField extends Field {
         return $this->uploadFile($file);
     }
 
-
     /**
      * @param $value
      *
@@ -72,14 +75,12 @@ class FileField extends Field {
      */
     public function toInternalValue($value)
     {
-        if ( ! $value instanceof File )
-        {
-            $this->fail("invalid");
+        if (! $value instanceof File) {
+            $this->fail('invalid');
         }
 
         return $value;
     }
-
 
     /**
      * @param string $filePath
@@ -91,7 +92,6 @@ class FileField extends Field {
         return $this->getFileURL($filePath);
     }
 
-
     /**
      * @param $filePath
      *
@@ -101,21 +101,19 @@ class FileField extends Field {
     {
         $driver = Config::get("filesystems.disks.{$this->disk}.driver");
 
-        switch ($driver)
-        {
+        switch ($driver) {
 
             case 's3':
-                return $this->getDisk()->getDriver()->getAdapter()->getClient()->getObjectUrl(Config::get("filesystems.disks.s3.bucket"),
+                return $this->getDisk()->getDriver()->getAdapter()->getClient()->getObjectUrl(Config::get('filesystems.disks.s3.bucket'),
                     $filePath);
 
             case 'local':
-                return URL::to($this->urlPrefix . $filePath);
+                return URL::to($this->urlPrefix.$filePath);
 
         }
 
-        throw new \InvalidArgumentException("Disk is not supported.");
+        throw new InvalidArgumentException('Disk is not supported.');
     }
-
 
     /**
      * @param File $file
@@ -133,111 +131,81 @@ class FileField extends Field {
         return $path;
     }
 
-
-    /**
-     * @param null $value
-     *
-     * @return $this|string
-     */
-    public function disk($value = null)
+    protected function getDiskAttribute()
     {
-        if ( $value !== null )
-        {
-            if ( ! is_string($value) )
-            {
-                throw new \InvalidArgumentException("disk must be string.");
-            }
-
-            $this->disk = $value;
-
-            return $this;
-        }
-
         return $this->disk;
     }
 
+    protected function setDiskAttribute($value)
+    {
+        if (! is_string($value)) {
+            throw new InvalidArgumentException('disk must be string.');
+        }
+
+        $this->disk = $value;
+
+        return $this;
+    }
 
     /**
      * @return $this
      */
     public function useCloud()
     {
-        $this->disk(Config::get("filesystems.cloud"));
+        $this->disk(Config::get('filesystems.cloud'));
 
         return $this;
     }
 
-
-    /**
-     * @param null $value
-     *
-     * @return $this|string
-     */
-    public function urlPrefix($value = null)
+    protected function getUrlPrefixAttribute()
     {
-        if ( $value !== null )
-        {
-            if ( ! is_string($value) )
-            {
-                throw new \InvalidArgumentException("urlPrefix must be string.");
-            }
-
-            $value = trim($value, "/") . "/";
-
-            $this->urlPrefix = $value;
-
-            return $this;
-        }
-
         return $this->urlPrefix;
     }
 
-
-    /**
-     * @return $this|string
-     */
-    public function subDir()
+    protected function setUrlPrefixAttribute($value)
     {
-        if ( func_num_args() > 0 )
-        {
-            $value = func_get_arg(0);
-
-            if ( ! is_string($value) )
-            {
-                throw new \InvalidArgumentException("subDir must be string.");
-            }
-
-            $this->subDir = $value;
-
-            return $this;
+        if (! is_string($value)) {
+            throw new InvalidArgumentException('urlPrefix must be string.');
         }
 
+        $value = trim($value, '/').'/';
+
+        $this->urlPrefix = $value;
+
+        return $this;
+    }
+
+    protected function getSubDirAttribute()
+    {
         return $this->subDir;
     }
 
-
-    /**
-     * @param null $value
-     *
-     * @return $this|string
-     */
-    public function visibility($value = null)
+    protected function setSubDirAttribute($value)
     {
-        if ( $value !== null )
-        {
-            if ( ! is_string($value) )
-            {
-                throw new \InvalidArgumentException("publicUpload must be string.");
-            }
-
-            $this->visibility = $value;
-
-            return $this;
+        if (! is_string($value)) {
+            throw new InvalidArgumentException('subDir must be string.');
         }
 
+        $this->subDir = $value;
+
+        return $this;
+    }
+
+    protected function getVisibilityAttribute()
+    {
         return $this->visibility;
     }
 
+    protected function setVisibilityAttribute($value)
+    {
+        if (! is_string($value)) {
+            throw new InvalidArgumentException('publicUpload must be string.');
+        }
+
+        $this->visibility = $value;
+
+        return $this;
+    }
 
     /**
      * @return FileSystem
@@ -247,7 +215,6 @@ class FileField extends Field {
         return Storage::disk($this->disk);
     }
 
-
     /**
      * @param $name
      *
@@ -255,19 +222,17 @@ class FileField extends Field {
      */
     protected function getUniqueFilePath($name)
     {
-        $basePath = $this->subDir ? $this->subDir . DIRECTORY_SEPARATOR . $name : $name;
+        $basePath = $this->subDir ? $this->subDir.DIRECTORY_SEPARATOR.$name : $name;
 
-        $path     = $basePath;
+        $path = $basePath;
         $pathInfo = pathinfo($basePath);
 
-        while (true)
-        {
-            if ( ! $this->getDisk()->exists($path) )
-            {
+        while (true) {
+            if (! $this->getDisk()->exists($path)) {
                 break;
             }
 
-            $path = $pathInfo["dirname"] . DIRECTORY_SEPARATOR . $pathInfo["filename"] . uniqid() . "." . $pathInfo["extension"];
+            $path = $pathInfo['dirname'].DIRECTORY_SEPARATOR.$pathInfo['filename'].uniqid().'.'.$pathInfo['extension'];
         }
 
         return $path;

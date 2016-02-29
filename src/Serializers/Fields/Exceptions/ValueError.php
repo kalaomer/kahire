@@ -1,9 +1,10 @@
-<?php namespace Kahire\Serializers\Fields\Exceptions;
+<?php
+
+namespace Kahire\Serializers\Fields\Exceptions;
 
 /**
- * Class ValueError
- * @package Kahire\Serializers\Fields\Exceptions
+ * Class ValueError.
  */
-class ValueError extends \UnexpectedValueException {
-
+class ValueError extends \UnexpectedValueException
+{
 }

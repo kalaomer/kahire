@@ -1,9 +1,10 @@
-<?php namespace Kahire\Serializers\Fields\Exceptions;
+<?php
+
+namespace Kahire\Serializers\Fields\Exceptions;
 
 /**
- * Class AttributeError
- * @package Kahire\Serializers\Fields\Exceptions
+ * Class AttributeError.
  */
-class AttributeError extends \Exception {
-
+class AttributeError extends \Exception
+{
 }

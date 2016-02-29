@@ -1,40 +1,35 @@
-<?php namespace Kahire\Serializers\Fields\Attributes;
+<?php
+
+namespace Kahire\Serializers\Fields\Attributes;
 
 /**
- * Class MimesAttribute
- * @package Kahire\Serializers\Fields\Attributes
+ * Class MimesAttribute.
+ * @method $this mimes($value)
  */
-trait MimesAttribute {
-
+trait MimesAttribute
+{
     /**
      * @var array
      */
-    protected $mimes = [ ];
+    protected $mimes = [];
 
-
-    /**
-     * @param array|null $value
-     *
-     * @return $this|array
-     */
-    public function mimes(array $value = null)
+    protected function getMimesAttribute()
     {
-        if ( $value !== null )
-        {
-            $this->mimes = $value;
-
-            return $this;
-        }
-
         return $this->mimes;
     }
 
+    protected function setMimesAttribute(array $value)
+    {
+        $this->mimes = $value;
+
+        return $this;
+    }
 
     /**
      * @return array
      */
     public function getMimesValidationRule()
     {
-        return [ "mimes" => $this->mimes ];
+        return ['mimes' => $this->mimes];
     }
 }

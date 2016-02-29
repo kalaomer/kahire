@@ -1,15 +1,16 @@
-<?php namespace Kahire\ViewSets\Mixins;
+<?php
+
+namespace Kahire\ViewSets\Mixins;
 
 use Illuminate\Database\Eloquent\Model;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
-trait DeleteModelMixin {
-
+trait DeleteModelMixin
+{
     /**
      * @return Model
      */
     abstract public function getObject();
-
 
     /**
      * @param ...$ids
@@ -21,9 +22,8 @@ trait DeleteModelMixin {
         $instance = $this->getObject();
         $this->performDelete($instance);
 
-        return new JsonResponse([ ], JsonResponse::HTTP_NO_CONTENT);
+        return new JsonResponse([], JsonResponse::HTTP_NO_CONTENT);
     }
-
 
     /**
      * @param Model $instance

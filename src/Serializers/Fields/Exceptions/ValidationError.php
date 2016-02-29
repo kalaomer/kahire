@@ -1,18 +1,18 @@
-<?php namespace Kahire\Serializers\Fields\Exceptions;
+<?php
+
+namespace Kahire\Serializers\Fields\Exceptions;
 
 use League\Flysystem\Exception;
 
 /**
- * Class ValidationError
- * @package Kahire\Serializers\Fields\Exceptions
+ * Class ValidationError.
  */
-class ValidationError extends \Exception {
-
+class ValidationError extends \Exception
+{
     /**
      * @var array
      */
-    protected $errors = [ ];
-
+    protected $errors = [];
 
     /**
      * ValidationError constructor.
@@ -23,12 +23,9 @@ class ValidationError extends \Exception {
      */
     public function __construct($message, $code = 1, Exception $previous = null)
     {
-        if ( ! is_array($message) )
-        {
-            $this->errors = [ $message ];
-        }
-        else
-        {
+        if (! is_array($message)) {
+            $this->errors = [$message];
+        } else {
             $this->errors = $message;
         }
 
@@ -37,7 +34,6 @@ class ValidationError extends \Exception {
         parent::__construct($message, $code, $previous);
     }
 
-
     /**
      * @param $rawMessage
      *
@@ -45,30 +41,24 @@ class ValidationError extends \Exception {
      */
     protected function convertMessage($rawMessage)
     {
-        if ( is_string($rawMessage) )
-        {
+        if (is_string($rawMessage)) {
             return $rawMessage;
         }
 
-        $messages = [ ];
+        $messages = [];
 
-        foreach ($rawMessage as $key => $value)
-        {
-            if ( is_string($key) )
-            {
-                $value      = $this->convertMessage($value);
+        foreach ($rawMessage as $key => $value) {
+            if (is_string($key)) {
+                $value = $this->convertMessage($value);
                 $messages[] = "$key => $value";
-            }
-            else
-            {
-                $value      = $this->convertMessage($value);
+            } else {
+                $value = $this->convertMessage($value);
                 $messages[] = $value;
             }
         }
 
-        return implode(", ", $messages);
+        return implode(', ', $messages);
     }
-
 
     /**
      * @return array|string

@@ -1,4 +1,6 @@
-<?php namespace Kahire\ViewSets;
+<?php
+
+namespace Kahire\ViewSets;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -6,16 +8,16 @@ use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Request;
 use Kahire\Serializers\Serializer;
 
-abstract class GenericViewSet extends Controller {
-
+abstract class GenericViewSet extends Controller
+{
     /**
-     * Model Class name
+     * Model Class name.
      * @var string
      */
     public $model;
 
     /**
-     * Serializer Class name
+     * Serializer Class name.
      * @var string
      */
     public $serializer;
@@ -24,7 +26,6 @@ abstract class GenericViewSet extends Controller {
      * @var string
      */
     public $lookupField = 'id';
-
 
     /**
      * @return Builder
@@ -37,7 +38,6 @@ abstract class GenericViewSet extends Controller {
         return $instance->newQuery();
     }
 
-
     /**
      * @return Model
      */
@@ -45,11 +45,10 @@ abstract class GenericViewSet extends Controller {
     {
         // Get ID from url segments.
         $segments = Request::segments();
-        $id       = end($segments);
+        $id = end($segments);
 
         return $this->getQuerySet()->where($this->lookupField, $id)->firstOrFail();
     }
-
 
     /**
      * @return Serializer
@@ -64,17 +63,15 @@ abstract class GenericViewSet extends Controller {
         return $serializer;
     }
 
-
     public function getSerializerClass()
     {
         return $this->serializer;
     }
 
-
     public function getSerializerContext()
     {
         return [
-            "view" => $this
+            'view' => $this,
         ];
     }
 }

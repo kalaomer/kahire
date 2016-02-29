@@ -1,22 +1,22 @@
-<?php namespace Kahire\ViewSets\Mixins;
+<?php
+
+namespace Kahire\ViewSets\Mixins;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\JsonResponse;
 use Kahire\Serializers\Serializer;
 
-trait ShowModelMixin {
-
+trait ShowModelMixin
+{
     /**
      * @return Serializer
      */
     abstract public function getSerializer();
 
-
     /**
      * @return Model
      */
     abstract public function getObject();
-
 
     /**
      * @return JsonResponse
