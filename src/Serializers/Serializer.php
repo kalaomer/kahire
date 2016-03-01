@@ -2,8 +2,10 @@
 
 namespace Kahire\Serializers;
 
+use ArrayAccess;
 use AssertionError;
 use Illuminate\Support\Facades\Validator;
+use InvalidArgumentException;
 use Kahire\Serializers\Fields\DataTypes\EmptyType;
 use Kahire\Serializers\Fields\Exceptions\SkipField;
 use Kahire\Serializers\Fields\Exceptions\ValidationError;
@@ -12,7 +14,7 @@ use Kahire\Serializers\Fields\Field;
 /**
  * Class Serializer.
  * @method $this partial()
- * @method $this instance()
+ * @method $this instance(array $instance)
  * @method $this context()
  * @method $this data(array $initialData)
  */
@@ -85,7 +87,7 @@ abstract class Serializer extends Field
     {
         parent::__construct();
 
-        $this->addAttributes('partial', 'instance', 'context');
+        $this->addAttributes('partial', 'context');
         $this->fields = array_merge($this->generateFields(), $this->generateAppendedFields());
         $this->setFields();
     }
@@ -411,5 +413,29 @@ abstract class Serializer extends Field
         }
 
         return $fields;
+    }
+
+    /**
+     * @return null
+     */
+    protected function getInstanceAttribute()
+    {
+        return $this->instance;
+    }
+
+    /**
+     * @param $value
+     *
+     * @return $this
+     */
+    protected function setInstanceAttribute($value)
+    {
+        if (! is_array($value) && ! $value instanceof ArrayAccess) {
+            throw new InvalidArgumentException('instance must be an array or implements ArrayAccess');
+        }
+
+        $this->instance = $value;
+
+        return $this;
     }
 }
