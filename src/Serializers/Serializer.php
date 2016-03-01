@@ -348,12 +348,22 @@ abstract class Serializer extends Field
         return $this->errors !== [];
     }
 
+    /**
+     * @param array $initialData
+     *
+     * @return $this
+     */
     protected function setDataAttribute(array $initialData)
     {
         $this->initialData = $initialData;
 
         return $this;
     }
+
+    /**
+     * @return array|null
+     * @throws AssertionError
+     */
     protected function getDataAttribute()
     {
         if ($this->initialData and ! $this->validatedData === null) {
