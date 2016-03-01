@@ -2,6 +2,8 @@
 
 namespace Kahire\Serializers\Fields\Attributes;
 
+use InvalidArgumentException;
+
 /**
  * Class RequiredAttribute.
  * @method $this required(bool $value)
@@ -21,7 +23,7 @@ trait RequiredAttribute
     protected function setRequiredAttribute($value)
     {
         if (! is_bool($value)) {
-            throw new \InvalidArgumentException('required must be bool.');
+            throw new InvalidArgumentException('required must be bool.');
         }
 
         $this->required = $value;

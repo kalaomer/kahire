@@ -2,6 +2,8 @@
 
 namespace Kahire\Serializers\Fields\Attributes;
 
+use InvalidArgumentException;
+
 /**
  * Class MaximumAttribute.
  * @method $this max(int $value)
@@ -21,7 +23,7 @@ trait MaximumAttribute
     protected function setMaxAttribute($value)
     {
         if (! is_integer($value)) {
-            throw new \InvalidArgumentException('value must be integer.');
+            throw new InvalidArgumentException('value must be integer.');
         }
 
         $this->max = $value;

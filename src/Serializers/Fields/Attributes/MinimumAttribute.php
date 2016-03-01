@@ -2,6 +2,8 @@
 
 namespace Kahire\Serializers\Fields\Attributes;
 
+use InvalidArgumentException;
+
 /**
  * Class MinimumAttribute.
  * @method $this min(int $value)
@@ -21,7 +23,7 @@ trait MinimumAttribute
     protected function setMinAttribute($value)
     {
         if (! is_integer($value)) {
-            throw new \InvalidArgumentException('value must be integer.');
+            throw new InvalidArgumentException('value must be integer.');
         }
 
         $this->min = $value;

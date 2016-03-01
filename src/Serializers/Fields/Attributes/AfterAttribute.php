@@ -3,6 +3,7 @@
 namespace Kahire\Serializers\Fields\Attributes;
 
 use DateTime;
+use InvalidArgumentException;
 
 /**
  * Class AfterAttribute.
@@ -23,7 +24,7 @@ trait AfterAttribute
     protected function setAfterAttribute($value)
     {
         if (! is_string($value) and ! $value instanceof DateTime) {
-            throw new \InvalidArgumentException('after value must be string or datetime.');
+            throw new InvalidArgumentException('after value must be string or datetime.');
         }
 
         $this->after = $value;

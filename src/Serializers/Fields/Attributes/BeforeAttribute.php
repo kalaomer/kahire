@@ -3,6 +3,7 @@
 namespace Kahire\Serializers\Fields\Attributes;
 
 use DateTime;
+use InvalidArgumentException;
 
 /**
  * Class BeforeAttribute.
@@ -23,7 +24,7 @@ trait BeforeAttribute
     protected function setBeforeAttribute($value)
     {
         if (! is_string($value) and ! $value instanceof DateTime) {
-            throw new \InvalidArgumentException('before value must be string or datetime.');
+            throw new InvalidArgumentException('before value must be string or datetime.');
         }
 
         $this->before = $value;

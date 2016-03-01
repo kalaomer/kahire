@@ -2,6 +2,7 @@
 
 namespace Kahire\Serializers;
 
+use BadMethodCallException;
 use Illuminate\Database\Eloquent\Model;
 use Kahire\Serializers\Fields\DateTimeField;
 use Kahire\Serializers\Fields\Field;
@@ -174,7 +175,7 @@ abstract class ModelSerializer extends Serializer
     public function update($instance, $validatedData)
     {
         if (count($this->getOneToOneRelations()) || count($this->getOneToManyRelations())) {
-            throw new \BadMethodCallException("This method does not support relation fields. You need to rewrite 'update()' method.");
+            throw new BadMethodCallException("This method does not support relation fields. You need to rewrite 'update()' method.");
         }
 
         foreach ($validatedData as $key => $value) {

@@ -2,6 +2,7 @@
 
 namespace Kahire\Serializers;
 
+use BadMethodCallException;
 use DeepCopy\DeepCopy;
 use Kahire\Serializers\Fields\Exceptions\ValidationError;
 
@@ -79,7 +80,7 @@ class ListSerializer extends Serializer
      */
     public function update($instance, $validatedData)
     {
-        throw new \BadMethodCallException('Serializers with many=True do not support multiple update by '.'default, only multiple create. For updates it is unclear how to '.'deal with insertions and deletions. If you need to support '.'multiple update, use a `ListSerializer` class and override '.'`.update()` so you can specify the behavior exactly.');
+        throw new BadMethodCallException('Serializers with many=True do not support multiple update by '.'default, only multiple create. For updates it is unclear how to '.'deal with insertions and deletions. If you need to support '.'multiple update, use a `ListSerializer` class and override '.'`.update()` so you can specify the behavior exactly.');
     }
 
     /**

@@ -2,6 +2,8 @@
 
 namespace Kahire\Serializers\Fields\Attributes;
 
+use InvalidArgumentException;
+
 /**
  * Class ReadWriteOnlyAttribute.
  * @method $this readOnly(bool $value)
@@ -27,11 +29,11 @@ trait ReadWriteOnlyAttribute
     protected function setReadOnlyAttribute($value)
     {
         if (! is_bool($value)) {
-            throw new \InvalidArgumentException('readOnly must be bool.');
+            throw new InvalidArgumentException('readOnly must be bool.');
         }
 
         if ($value and $this->writeOnly) {
-            throw new \InvalidArgumentException("readOnly can't be `true` when writeOnly is `true`");
+            throw new InvalidArgumentException("readOnly can't be `true` when writeOnly is `true`");
         }
 
         $this->readOnly = $value;
@@ -47,11 +49,11 @@ trait ReadWriteOnlyAttribute
     protected function setWriteOnlyAttribute($value)
     {
         if (! is_bool($value)) {
-            throw new \InvalidArgumentException('writeOnly must be bool.');
+            throw new InvalidArgumentException('writeOnly must be bool.');
         }
 
         if ($value and $this->readOnly) {
-            throw new \InvalidArgumentException("writeOnly can't be `true` when readOnly is `true`");
+            throw new InvalidArgumentException("writeOnly can't be `true` when readOnly is `true`");
         }
 
         $this->writeOnly = $value;
