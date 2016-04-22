@@ -1,0 +1,14 @@
+<?php
+
+namespace {{namespace}};
+
+use Kahire\Seriliazers\Fields;
+use Kahire\Serializers\Serializer;
+
+class {{class}} extends Serializer {
+
+	public function generateFields()
+	{
+		return {{fields}};
+	}
+}
