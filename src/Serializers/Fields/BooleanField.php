@@ -24,7 +24,7 @@ class BooleanField extends Field
     public function toRepresentation($value)
     {
         // Can not use is_array or array_search
-        // Because they always return TRUE because of `true` value which is in TRUE_VALUES.
+        // Because they always return TRUE because of that `true` value which is in TRUE_VALUES.
         foreach (self::TRUE_VALUES as $trueValue) {
             if ($trueValue === $value) {
                 return true;
