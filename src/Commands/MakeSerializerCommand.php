@@ -2,6 +2,8 @@
 
 namespace Kahire\Commands;
 
+use Kahire\Commands\Parsers\FieldParser;
+
 use Illuminate\Console\AppNamespaceDetectorTrait;
 use Illuminate\Console\Command;
 use Illuminate\Filesystem\Filesystem;
@@ -18,11 +20,14 @@ class MakeSerializerCommand extends Command {
 
     protected $files;
 
+    protected $fieldParser;
+
     public function __construct(Filesystem $filesystem)
     {
         parent::__construct();
 
         $this->files = $filesystem;
+        $this->fieldParser = new FieldParser();
     }
 
 
@@ -50,7 +55,6 @@ class MakeSerializerCommand extends Command {
 
     protected function makeDirectory()
     {
-        var_dump($this->getSerializerPath());
         if (! $this->files->isDirectory($this->getSerializerPath()))
         {
             $this->files->makeDirectory($this->getSerializerPath(), 0777);
@@ -59,9 +63,13 @@ class MakeSerializerCommand extends Command {
 
     public function getSerializerPath($name=null)
     {
-        $base = app_path() . DIRECTORY_SEPARATOR . "Http" . DIRECTORY_SEPARATOR . "Serializers" . DIRECTORY_SEPARATOR;
+        $folderPath = app_path("Http/Serializers");
 
-        return $name? $base . $this->getStubClassName() . ".php" : $base;
+        if ($name === null) {
+            return $folderPath;
+        }
+
+        return $folderPath . DIRECTORY_SEPARATOR . $this->getStubClassName($name) . ".php";
     }
 
     protected function compileSerializerStub()
@@ -86,14 +94,16 @@ class MakeSerializerCommand extends Command {
         return $content;
     }
 
-    protected function getStubClassName()
+    protected function getStubClassName($name = null)
     {
-        return ucfirst(camel_case($this->argument("name"))) . "Serializer";
+        return studly_case($name ? $name : $this->argument("name")) . "Serializer";
     }
 
     protected function getStubFields()
     {
-        $fields = $this->option("field");
+        $fields = $this->argument("fields");
+
+        $parsedFields = $this->fieldParser->parse($fields);
 
         if ($fields == [])
         {
@@ -106,7 +116,6 @@ class MakeSerializerCommand extends Command {
     protected function getOptions()
     {
         return [
-            ['field', 'f', InputOption::VALUE_IS_ARRAY | InputOption::VALUE_OPTIONAL, 'Fields for the migration'],
             ['path', null, InputOption::VALUE_OPTIONAL, 'Where should the file be created?']
         ];
     }
@@ -114,7 +123,8 @@ class MakeSerializerCommand extends Command {
     protected function getArguments()
     {
         return [
-            ['name', InputArgument::REQUIRED, 'The Serializer name']
+            ['name', InputArgument::REQUIRED, 'The Serializer name'],
+            ['fields', InputArgument::REQUIRED, 'The Serializer fields']
         ];
     }
 }
